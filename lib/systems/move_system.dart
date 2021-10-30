@@ -1,6 +1,6 @@
 part of systems;
 
-class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
+class MoveSystem extends System with UpdateSystem, GameRef<AppGame> {
   Query? _query;
 
   @override
