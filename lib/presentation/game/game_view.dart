@@ -53,6 +53,7 @@ class AppGame extends Forge2DGame
   double get worldBottomY => worldBounds.bottom - 100;
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
     await spritesCache.onLoad();
 
     gameCamera.followPosition();
@@ -63,36 +64,41 @@ class AppGame extends Forge2DGame
     camera
       ..worldBounds = worldSize.toRect()
       ..zoom = 0.8;
+    await addAll(createBoundaries(this));
+
+    addContactCallback(WinContactCallback(game: this, onWin: () {}));
+    addContactCallback(KillingContactCallback(game: this, onKill: () {}));
+    addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
     await add(BackgroundComponent(worldSize, bg));
-    await add(YoungsterComponent(
-      game: this,
-      title: SpritesTitles.ghost,
-      position: Vector2(400, -100),
-      size: Vector2(100, 100),
-    ));
-
     await add(
-      FixtureComponent.createWall(
+      YoungsterComponent(
         game: this,
-        position: Vector2(600, -worldBottomY),
+        title: SpritesTitles.ghost,
+        position: Vector2(400, -100),
+        size: Vector2(100, 100),
       ),
     );
+
     await add(
-      FixtureComponent.createCandyBag(
+      WinObstacleComponent.create(
         game: this,
         position: Vector2(500, -worldBottomY),
       ),
     );
     await add(
-      FixtureComponent.createGhost(
+      CandyBagComponent.create(
+        game: this,
+        position: Vector2(500, -worldBottomY + 300),
+      ),
+    );
+    await add(
+      KillingObstacleComponent.create(
         game: this,
         position: Vector2(300, -100),
       ),
     );
-    await addAll(createBoundaries(this));
     await onAssetsLoad();
-    return super.onLoad();
   }
 
   @override

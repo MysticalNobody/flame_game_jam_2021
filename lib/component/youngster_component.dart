@@ -38,11 +38,6 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   }
 
   @override
-  bool onDragCancel(int pointerId) {
-    return super.onDragCancel(pointerId);
-  }
-
-  @override
   Body createBody() {
     final PolygonShape shape = PolygonShape();
 
