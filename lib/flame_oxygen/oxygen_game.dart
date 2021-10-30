@@ -1,5 +1,6 @@
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/material.dart';
 import 'package:oxygen/oxygen.dart';
 
@@ -11,11 +12,11 @@ import 'flame_world.dart';
 /// [OxygenGame] should be extended to add your own game logic.
 ///
 /// It is based on the Oxygen package.
-abstract class OxygenGame with Loadable, Game {
-  late final FlameWorld world;
+abstract class OxygenGame extends Forge2DGame with Loadable {
+  late final FlameWorld oxygenWorld;
 
   OxygenGame() {
-    world = FlameWorld(this);
+    oxygenWorld = FlameWorld(this);
   }
 
   /// Create a new [Entity].
@@ -28,7 +29,7 @@ abstract class OxygenGame with Loadable, Game {
     bool flipX = false,
     bool flipY = false,
   }) {
-    final entity = world.entityManager.createEntity(name)
+    final entity = oxygenWorld.entityManager.createEntity(name)
       ..add<PositionComponent, Vector2>(position)
       ..add<SizeComponent, Vector2>(size)
       ..add<AnchorComponent, Anchor>(anchor)
@@ -43,20 +44,25 @@ abstract class OxygenGame with Loadable, Game {
     await super.onLoad();
 
     // Registering default components.
-    world.registerComponent<SizeComponent, Vector2>(() => SizeComponent());
-    world.registerComponent<PositionComponent, Vector2>(
+    oxygenWorld
+        .registerComponent<SizeComponent, Vector2>(() => SizeComponent());
+    oxygenWorld.registerComponent<PositionComponent, Vector2>(
       () => PositionComponent(),
     );
-    world.registerComponent<AngleComponent, double>(() => AngleComponent());
-    world.registerComponent<AnchorComponent, Anchor>(() => AnchorComponent());
-    world.registerComponent<SpriteComponent, SpriteInit>(
+    oxygenWorld
+        .registerComponent<AngleComponent, double>(() => AngleComponent());
+    oxygenWorld
+        .registerComponent<AnchorComponent, Anchor>(() => AnchorComponent());
+    oxygenWorld.registerComponent<SpriteComponent, SpriteInit>(
       () => SpriteComponent(),
     );
-    world.registerComponent<TextComponent, TextInit>(() => TextComponent());
-    world.registerComponent<FlipComponent, FlipInit>(() => FlipComponent());
+    oxygenWorld
+        .registerComponent<TextComponent, TextInit>(() => TextComponent());
+    oxygenWorld
+        .registerComponent<FlipComponent, FlipInit>(() => FlipComponent());
 
     await init();
-    world.init();
+    oxygenWorld.init();
   }
 
   /// Initialize the game and world.
@@ -64,9 +70,9 @@ abstract class OxygenGame with Loadable, Game {
 
   @override
   @mustCallSuper
-  void render(Canvas canvas) => world.render(canvas);
+  void render(Canvas canvas) => oxygenWorld.render(canvas);
 
   @override
   @mustCallSuper
-  void update(double delta) => world.update(delta);
+  void update(double delta) => oxygenWorld.update(delta);
 }
