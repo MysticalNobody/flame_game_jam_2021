@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:example/component/camera_mover_component.dart';
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
