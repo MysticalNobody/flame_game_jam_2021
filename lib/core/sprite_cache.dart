@@ -13,7 +13,7 @@ class SpritesCache with Loadable {
   @override
   Future<void>? onLoad() async {
     for (final spriteTitle in SpritesTitles.values) {
-      final spritePath = '${spriteTitle.toString().snakeCase}.png';
+      final spritePath = '${describeEnum(spriteTitle).snakeCase}.png';
       sprites[spriteTitle] = await game.loadSprite(spritePath);
     }
     await super.onLoad();
