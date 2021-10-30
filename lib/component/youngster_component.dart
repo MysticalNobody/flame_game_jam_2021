@@ -16,28 +16,48 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   final SpritesTitles title;
   final AppGame game;
   final Sprite sprite;
-  MouseJoint? mouseJoint;
+
+  ThrowingTrajectoryComponent? throwingTrajectory;
+  bool dragging = false;
+  Vector2? dragStart;
+  Vector2? dragDiff;
+
   Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
     log(info.eventPosition.game.toString());
+    dragging = true;
+    dragStart = info.eventPosition.game;
     return super.onDragStart(pointerId, info);
   }
 
   @override
   bool onDragUpdate(int pointerId, DragUpdateInfo event) {
+    if (dragging == true) {
+      dragDiff = event.eventPosition.game - dragStart!;
+    }
     return super.onDragUpdate(pointerId, event);
   }
 
   @override
   bool onDragEnd(int pointerId, DragEndInfo event) {
-    body.applyForce(event.velocity * 100);
+    // body.applyForce(event.velocity * 100);
+    dragging = false;
     log(event.velocity.toString());
     return super.onDragEnd(pointerId, event);
   }
 
   @override
+<<<<<<< HEAD
+=======
+  bool onDragCancel(int pointerId) {
+    dragging = false;
+    return super.onDragCancel(pointerId);
+  }
+
+  @override
+>>>>>>> 826770825fdb427a4869a84b98361b60fb82f5c3
   Body createBody() {
     final PolygonShape shape = PolygonShape();
 
@@ -56,10 +76,66 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
 
     final bodyDef = BodyDef()
       ..position = position
-      ..angle = (position.x + position.y) / 2 * 3.14
       ..type = BodyType.dynamic;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
       ..setMassData(MassData());
+  }
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    throwingTrajectory = ThrowingTrajectoryComponent(
+      game: game,
+      position: position,
+    );
+    await add(throwingTrajectory!);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (throwingTrajectory != null && dragging) {
+      throwingTrajectory!.showDrag(body.position, dragDiff!);
+    } else {
+      throwingTrajectory!.hideDrag();
+    }
+  }
+}
+
+class ThrowingTrajectoryComponent extends PositionComponent with HasPaint {
+  ThrowingTrajectoryComponent({
+    required this.game,
+    Vector2? position,
+  }) : super(
+          position: position,
+          priority: 20,
+        );
+  final AppGame game;
+  bool show = false;
+  Vector2 velocity = Vector2.zero();
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    if (!show) return;
+    for (int time = 0; time < 10; time++) {
+      double x = position.x -
+          velocity.x * time -
+          (game.world.gravity.x / 2) * time * time;
+      double y = position.y +
+          (velocity.y * time - (game.world.gravity.y / 2) * time * time);
+      canvas.drawCircle(Offset(x, y), 5, paint);
+    }
+  }
+
+  void hideDrag() {
+    show = false;
+  }
+
+  void showDrag(Vector2 position, Vector2 dragDiff) {
+    this.position = position;
+    velocity = dragDiff;
+    show = true;
   }
 }

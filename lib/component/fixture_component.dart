@@ -196,7 +196,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
         game: game,
         title: SpritesTitles.ghost,
         position: position,
-        size: Vector2(100, 100),
+        size: Vector2(100, 80),
       );
 }
 
@@ -242,7 +242,6 @@ class BaseObstacleComponent extends SpriteBodyComponent {
     final bodyDef = BodyDef()
       ..userData = this
       ..position = position
-      ..angle = (position.x + position.y) / 2 * 3.14
       ..type = type;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
