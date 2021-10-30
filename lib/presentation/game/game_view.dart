@@ -46,7 +46,7 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
     );
     camera
       ..worldBounds = worldSize.toRect()
-      ..zoom = 0.3;
+      ..zoom = 0.8;
     final enemy = await loadSprite('enemy.png');
     await add(BackgroundComponent(worldSize, bg));
     await add(
