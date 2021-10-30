@@ -7,10 +7,7 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
     required this.position,
     required Vector2 size,
   })  : sprite = game.getSprite(title),
-        super(
-          game.getSprite(title),
-          size * game.aspectRatio,
-        );
+        super(game.getSprite(title), size);
 
   final Vector2 position;
   final SpritesTitles title;
@@ -21,8 +18,6 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   bool dragging = false;
   Vector2? dragStart;
   Vector2? dragDiff;
-
-  Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {

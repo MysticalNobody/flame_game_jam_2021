@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
@@ -8,6 +9,7 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/parallax.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
@@ -60,109 +62,81 @@ class AppGame extends Forge2DGame
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
-  double aspectRatio = 1.0;
-
-  void setAspectRatio() => aspectRatio = size.x / size.y;
-
+  late YoungsterComponent com;
   @override
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
-    setAspectRatio();
+    camera
+      ..worldBounds = const Rect.fromLTRB(0, 0, 20000, 1000)
+      ..zoom =
+          window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
   }
 
   Rect get worldBounds => camera.worldBounds!;
-  double get worldBottomY => worldBounds.bottom - 100;
   @override
   Future<void> onLoad() async {
+    debugMode = true;
     await spritesCache.onLoad();
-
-    gameCamera.followPosition();
-    final bg = getSprite(SpritesTitles.bg);
-
-    final worldSize = Vector2(bg.srcSize.x, bg.srcSize.y) * aspectRatio;
-
-    camera
-      ..worldBounds = worldSize.toRect()
-      ..zoom = 0.8;
+    // world.setGravity(Vector2(200, -10));
     await addAll(createBoundaries(this));
 
-    addContactCallback(WinContactCallback(game: this, onWin: () {}));
-    addContactCallback(KillingContactCallback(game: this, onKill: () {}));
-    addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
-    await add(BackgroundComponent(worldSize, bg));
     await add(
-      YoungsterComponent(
-        game: this,
-        title: SpritesTitles.ghost,
-        position: Vector2(700, -225),
-        size: Vector2(100, 100),
+      await loadParallaxComponent(
+        [
+          ParallaxImageData('0.png'),
+          ParallaxImageData('1.png'),
+          ParallaxImageData('2.png'),
+          ParallaxImageData('3.png'),
+          // ParallaxImageData('bg.png'),
+        ],
+        priority: -1,
+        // baseVelocity: Vector2(20, 0),
+        velocityMultiplierDelta: Vector2(1.8, 0),
+        alignment: Alignment.bottomCenter,
       ),
     );
 
-    await add(BackgroundComponent(worldSize, bg));
-    await add(
-      YoungsterComponent(
-        game: this,
-        title: SpritesTitles.ghost,
-        position: Vector2(400, -100),
-        size: Vector2(100, 100),
-      ),
-    );
+    // addContactCallback(WinContactCallback(game: this, onWin: () {}));
+    // addContactCallback(KillingContactCallback(game: this, onKill: () {}));
+    // addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
-    await add(
-      WinObstacleComponent.create(
-        game: this,
-        position: Vector2(500, -worldBottomY),
-      ),
+    com = YoungsterComponent(
+      game: this,
+      title: SpritesTitles.ghost,
+      position: Vector2(100, -700),
+      size: Vector2(100, 100),
     );
-    await add(
-      CandyBagComponent.create(
-        game: this,
-        position: Vector2(500, -worldBottomY + 300),
-      ),
-    );
-    await add(
-      KillingObstacleComponent.create(
-        game: this,
-        position: Vector2(350, -145),
-      ),
-    );
+    await add(com);
+    gameCamera.followComponent(com.positionComponent);
+
+    // await add(
+    //   YoungsterComponent(
+    //     game: this,
+    //     title: SpritesTitles.ghost,
+    //     position: Vector2(400, -100),
+    //     size: Vector2(100, 100),
+    //   ),
+    // );
+
+    // await add(
+    //   WinObstacleComponent.create(
+    //     game: this,
+    //     position: Vector2(500, -worldBottomY),
+    //   ),
+    // );
+    // await add(
+    //   CandyBagComponent.create(
+    //     game: this,
+    //     position: Vector2(500, -worldBottomY + 300),
+    //   ),
+    // );
+    // await add(
+    //   KillingObstacleComponent.create(
+    //     game: this,
+    //     position: Vector2(350, -145),
+    //   ),
+    // );
     await onAssetsLoad();
     await super.onLoad();
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    if (!gameCamera.velocity.isZero()) {
-      gameCamera.position.add(gameCamera.velocity * dt * 10);
-    }
-  }
-
-  @override
-  KeyEventResult onKeyEvent(
-    RawKeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
-    final isKeyDown = event is RawKeyDownEvent;
-
-    void moveAlong({required AxisDirection direction}) {
-      if (isKeyDown) {
-        gameCamera.moveAlong(direction);
-      } else {
-        gameCamera.stopMoveAlong();
-      }
-    }
-
-    if (event.logicalKey == LogicalKeyboardKey.keyA) {
-      moveAlong(direction: AxisDirection.left);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyD) {
-      moveAlong(direction: AxisDirection.right);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
-      moveAlong(direction: AxisDirection.up);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
-      moveAlong(direction: AxisDirection.down);
-    }
-    return KeyEventResult.handled;
   }
 }

@@ -69,7 +69,7 @@ class CandyBagComponent extends SpriteBodyComponent {
   })  : sprite = game.getSprite(title),
         super(
           game.getSprite(title),
-          size * game.aspectRatio,
+          size,
         );
 
   factory CandyBagComponent.create({
@@ -89,8 +89,6 @@ class CandyBagComponent extends SpriteBodyComponent {
   final AppGame game;
   final Sprite sprite;
   final BodyType type;
-
-  Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
   Body createBody() {
@@ -209,18 +207,13 @@ class BaseObstacleComponent extends SpriteBodyComponent {
     required Vector2 size,
     this.type = BodyType.dynamic,
   })  : sprite = game.getSprite(title),
-        super(
-          game.getSprite(title),
-          size * game.aspectRatio,
-        );
+        super(game.getSprite(title), size);
 
   final Vector2 position;
   final SpritesTitles title;
   final AppGame game;
   final Sprite sprite;
   final BodyType type;
-
-  Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
   Body createBody() {

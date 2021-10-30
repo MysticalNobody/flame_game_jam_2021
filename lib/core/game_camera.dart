@@ -13,11 +13,11 @@ class GameCamera {
   void followPosition() {
     follower = CameraFollower.position;
     position.setFrom(game.camera.position);
-    game.camera.followVector2(position, relativeOffset: Anchor.topLeft);
+    game.camera.followVector2(position);
   }
 
   void followComponent(PositionComponent component) {
-    game.camera.followComponent(component, relativeOffset: Anchor.topLeft);
+    game.camera.followComponent(component);
     velocity.setZero();
     follower = CameraFollower.component;
   }
