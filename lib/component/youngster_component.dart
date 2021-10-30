@@ -60,7 +60,6 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
 
     final bodyDef = BodyDef()
       ..position = position
-      ..angle = (position.x + position.y) / 2 * 3.14
       ..type = BodyType.dynamic;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)

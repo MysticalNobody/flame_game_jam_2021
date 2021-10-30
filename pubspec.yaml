@@ -36,6 +36,8 @@ dependencies:
   stacked: ^2.2.7
   # flame_flare: ^0.1.0
   flame_tiled: 1.0.0-releasecandidate.15
+  just_audio: ^0.9.15
+  just_audio_libwinmedia: any
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.2
@@ -78,6 +80,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/audio/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

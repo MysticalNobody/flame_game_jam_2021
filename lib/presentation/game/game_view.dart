@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
@@ -11,6 +14,9 @@ import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:universal_io/io.dart';
 
 class AppGameView extends StatefulWidget {
   const AppGameView({
@@ -24,6 +30,24 @@ class AppGameView extends StatefulWidget {
 }
 
 class _AppGameViewState extends State<AppGameView> {
+  final player = AudioPlayer();
+  @override
+  void initState() {
+    play();
+    super.initState();
+  }
+
+  Future<void> play() async {
+    await player.setAsset('assets/audio/pixies-where-is-my-mind.mp3');
+    player.play();
+  }
+
+  @override
+  void dispose() {
+    player.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppGameWidget(game: widget.game);
@@ -68,7 +92,7 @@ class AppGame extends Forge2DGame
     await add(YoungsterComponent(
       game: this,
       title: SpritesTitles.ghost,
-      position: Vector2(400, -100),
+      position: Vector2(700, -225),
       size: Vector2(100, 100),
     ));
 
@@ -87,7 +111,7 @@ class AppGame extends Forge2DGame
     await add(
       FixtureComponent.createGhost(
         game: this,
-        position: Vector2(300, -100),
+        position: Vector2(350, -145),
       ),
     );
     await addAll(createBoundaries(this));
