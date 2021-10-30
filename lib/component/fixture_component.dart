@@ -220,7 +220,26 @@ class BaseObstacleComponent extends SpriteBodyComponent {
   final Sprite sprite;
   final BodyType type;
 
+  async.Timer? timer;
+  widgets.AxisDirection impulseDirection = widgets.AxisDirection.up;
   Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
+  void moveAlongPoints() {
+    timer = async.Timer.periodic(const Duration(seconds: 5), (timer) {
+      final sign = impulseDirection == widgets.AxisDirection.up ? -1 : 1000;
+      body.applyLinearImpulse(Vector2(0, sign * 2000));
+      if (impulseDirection == widgets.AxisDirection.up) {
+        impulseDirection = widgets.AxisDirection.down;
+      } else {
+        impulseDirection = widgets.AxisDirection.up;
+      }
+    });
+  }
+
+  @override
+  void onRemove() {
+    timer?.cancel();
+    super.onRemove();
+  }
 
   @override
   Body createBody() {
@@ -243,6 +262,8 @@ class BaseObstacleComponent extends SpriteBodyComponent {
       ..userData = this
       ..position = position
       ..type = type;
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
+    return world.createBody(bodyDef)
+      ..createFixture(fixtureDef)
+      ..setMassData(MassData()..mass = 40);
   }
 }

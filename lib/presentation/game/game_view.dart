@@ -121,12 +121,12 @@ class AppGame extends Forge2DGame
         position: Vector2(500, -worldBottomY + 300),
       ),
     );
-    await add(
-      KillingObstacleComponent.create(
-        game: this,
-        position: Vector2(350, -145),
-      ),
+    final killingObstacle = KillingObstacleComponent.create(
+      game: this,
+      position: Vector2(350, -145),
     );
+    await add(killingObstacle);
+    killingObstacle.moveAlongPoints();
     await onAssetsLoad();
     await super.onLoad();
     gameCamera.initCameraPosition();
