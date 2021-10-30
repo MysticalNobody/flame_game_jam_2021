@@ -28,34 +28,8 @@ class _HomeViewState extends State<HomeView> {
         await model.init();
       },
       builder: (context, model, child) {
-        return IndexedStack(
-          index: model.page.index,
-          children: [
-            Stack(
-              children: [
-                Center(
-                  child: TextButton(
-                      onPressed: () {
-                        model.changePage(Pages.game);
-                      },
-                      child: Text('game')),
-                )
-              ],
-            ),
-            Column(
-              children: [
-                Expanded(
-                    child: AppGameView(
-                  game: gameWidget,
-                )),
-                TextButton(
-                    onPressed: () {
-                      model.changePage(Pages.menu);
-                    },
-                    child: Text('menu'))
-              ],
-            ),
-          ],
+        return AppGameView(
+          game: gameWidget,
         );
       },
     );
