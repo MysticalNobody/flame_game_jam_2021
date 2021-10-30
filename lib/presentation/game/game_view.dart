@@ -54,8 +54,7 @@ class _AppGameViewState extends State<AppGameView> {
   }
 }
 
-class AppGame extends Forge2DGame
-    with FPSCounter, HasDraggableComponents, MultiTouchDragDetector {
+class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   AppGame({
     required this.onAssetsLoad,
   });

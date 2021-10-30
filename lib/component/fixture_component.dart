@@ -218,10 +218,10 @@ class BaseObstacleComponent extends SpriteBodyComponent {
   async.Timer? timer;
   widgets.AxisDirection impulseDirection = widgets.AxisDirection.up;
   void moveAlongPoints() {
-    timer = async.Timer.periodic(const Duration(seconds: 5), (timer) {
-      final sign = impulseDirection == widgets.AxisDirection.up ? -1 : 1000;
+    timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
+      final dir = [-1, -1, 0, 1, 1][math.Random().nextInt(5)];
 
-      body.applyLinearImpulse(Vector2(0, sign * 2000));
+      body.applyLinearImpulse(Vector2(0, dir * 2000));
       if (impulseDirection == widgets.AxisDirection.up) {
         impulseDirection = widgets.AxisDirection.down;
       } else {
@@ -259,6 +259,6 @@ class BaseObstacleComponent extends SpriteBodyComponent {
       ..type = type;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
-      ..setMassData(MassData()..mass = 40);
+      ..setMassData(MassData()..mass = 30);
   }
 }
