@@ -16,7 +16,6 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   final SpritesTitles title;
   final AppGame game;
   final Sprite sprite;
-  MouseJoint? mouseJoint;
   Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
