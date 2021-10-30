@@ -1,6 +1,5 @@
 import 'package:example/component/components.dart';
 import 'package:example/core/core.dart';
-import 'package:example/gen/assets.gen.dart';
 import 'package:example/presentation/game/game_widget.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -35,15 +34,13 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   late final GameCamera gameCamera = GameCamera(game: this);
   @override
   Future<void> onLoad() async {
+    camera.worldBounds = GameCamera.worldBounds;
+    gameCamera.followPosition();
+
     // this.remove(c);
     final bg = await loadSprite('bg.jpg');
-    await add(BackgroundComponent(
-      Vector2((bg.srcSize.x / bg.srcSize.y) * size.x, size.y),
-      bg,
-    ));
+    await add(BackgroundComponent(Vector2(size.x, size.y), bg));
     await onAssetsLoad();
-    gameCamera.followPosition();
-    camera.worldBounds = GameCamera.worldBounds;
     return super.onLoad();
   }
 

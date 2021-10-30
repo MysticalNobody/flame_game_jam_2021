@@ -1,5 +1,7 @@
 library core;
 
+import 'dart:developer';
+
 import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';

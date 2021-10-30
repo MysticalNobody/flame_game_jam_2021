@@ -4,7 +4,7 @@ enum CameraFollower { position, component }
 
 class GameCamera {
   GameCamera({required this.game});
-  static const worldBounds = Rect.fromLTWH(0, 0, 800, 600);
+  static const worldBounds = Rect.fromLTWH(0, 0, 200, 200);
   static const moveStep = 4;
   final AppGame game;
   Vector2 position = Vector2.zero();
@@ -14,16 +14,17 @@ class GameCamera {
   void followPosition() {
     follower = CameraFollower.position;
     position.setFrom(game.camera.position);
-    game.camera.followVector2(position);
+    game.camera.followVector2(position, relativeOffset: Anchor.topLeft);
   }
 
   void followComponent(PositionComponent component) {
-    game.camera.followComponent(component);
+    game.camera.followComponent(component, relativeOffset: Anchor.topLeft);
     velocity.setZero();
     follower = CameraFollower.component;
   }
 
   void moveAlong(AxisDirection direction) {
+    print('direction $direction');
     switch (direction) {
       case AxisDirection.down:
         velocity.y -= moveStep;
