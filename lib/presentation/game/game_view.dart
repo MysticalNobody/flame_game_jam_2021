@@ -36,13 +36,13 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   late final GameCamera gameCamera = GameCamera(game: this);
   @override
   Future<void> onLoad() async {
-    // camera.worldBounds = GameCamera.worldBounds;
+    final bg = await loadSprite('bg.jpg');
+    camera.worldBounds = bg.srcSize.toRect();
     gameCamera.followPosition();
 
     // this.remove(c);
-    final bg = await loadSprite('bg.jpg');
     final enemy = await loadSprite('enemy.png');
-    await add(BackgroundComponent(Vector2(size.x, size.y), bg));
+    await add(BackgroundComponent(Vector2(bg.srcSize.x, bg.srcSize.y), bg));
     await add(
       EnemyComponent(
         enemy,

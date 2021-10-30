@@ -4,7 +4,6 @@ enum CameraFollower { position, component }
 
 class GameCamera {
   GameCamera({required this.game});
-  static const worldBounds = Rect.fromLTWH(0, 0, 200, 200);
   static const moveStep = 12.0;
   final AppGame game;
   Vector2 position = Vector2.zero();
