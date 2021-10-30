@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
+import 'package:example/component/camera_mover_component.dart';
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
@@ -53,7 +55,7 @@ class _AppGameViewState extends State<AppGameView> {
 }
 
 class AppGame extends Forge2DGame
-    with KeyboardEvents, FPSCounter, HasDraggableComponents {
+    with FPSCounter, HasDraggableComponents, MultiTouchDragDetector {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -129,7 +131,32 @@ class AppGame extends Forge2DGame
     );
     await onAssetsLoad();
     await super.onLoad();
+    final camComponent = CameraMoverComponent(gameCamera);
+    await add(camComponent);
     gameCamera.initCameraPosition();
+  }
+
+  @override
+  void onDragStart(int pointerId, DragStartInfo info) {
+    log(info.eventPosition.game.toString());
+    super.onDragStart(pointerId, info);
+  }
+
+  @override
+  void onDragUpdate(int pointerId, DragUpdateInfo event) {
+    gameCamera.position = event.eventPosition.game;
+    log(event.eventPosition.game.toString());
+    super.onDragUpdate(pointerId, event);
+  }
+
+  @override
+  void onDragEnd(int pointerId, DragEndInfo event) {
+    super.onDragEnd(pointerId, event);
+  }
+
+  @override
+  void onDragCancel(int pointerId) {
+    super.onDragCancel(pointerId);
   }
 
   @override
@@ -138,32 +165,5 @@ class AppGame extends Forge2DGame
     if (!gameCamera.velocity.isZero()) {
       gameCamera.position.add(gameCamera.velocity * dt * 10);
     }
-  }
-
-  @override
-  KeyEventResult onKeyEvent(
-    RawKeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
-    final isKeyDown = event is RawKeyDownEvent;
-
-    void moveAlong({required AxisDirection direction}) {
-      if (isKeyDown) {
-        gameCamera.moveAlong(direction);
-      } else {
-        gameCamera.stopMoveAlong();
-      }
-    }
-
-    if (event.logicalKey == LogicalKeyboardKey.keyA) {
-      moveAlong(direction: AxisDirection.left);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyD) {
-      moveAlong(direction: AxisDirection.right);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
-      moveAlong(direction: AxisDirection.up);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
-      moveAlong(direction: AxisDirection.down);
-    }
-    return KeyEventResult.handled;
   }
 }
