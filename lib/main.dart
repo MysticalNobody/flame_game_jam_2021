@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:example/component/components.dart';
+import 'package:example/core/core.dart';
 import 'package:flame/game.dart';
 import 'package:flame_oxygen/flame_oxygen.dart';
 import 'package:flutter/foundation.dart';
@@ -22,8 +23,6 @@ void main() {
     ),
   );
 }
-
-typedef FutureVoidCallback = Future<void> Function();
 
 class ExampleGame extends OxygenGame with FPSCounter {
   ExampleGame({
