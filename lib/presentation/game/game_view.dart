@@ -2,10 +2,12 @@ import 'dart:math' as math;
 
 import 'package:example/component/components.dart';
 import 'package:example/core/core.dart';
+import 'package:example/flame_oxygen/component.dart';
+import 'package:example/flame_oxygen/oxygen_game.dart';
 import 'package:example/presentation/game/game_widget.dart';
 import 'package:example/systems/systems.dart';
 import 'package:flame/game.dart';
-import 'package:flame_oxygen/flame_oxygen.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -27,7 +29,7 @@ class _AppGameViewState extends State<AppGameView> {
   }
 }
 
-class AppGame extends OxygenGame with FPSCounter {
+class AppGame extends OxygenGame {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -42,14 +44,15 @@ class AppGame extends OxygenGame with FPSCounter {
   @override
   Future<void> init() async {
     if (kDebugMode) {
-      oWorld.registerSystem(DebugSystem());
+      oxygenWorld.registerSystem(DebugSystem());
     }
-    oWorld.registerSystem(MoveSystem());
-    oWorld.registerSystem(SpriteSystem());
-    oWorld.registerSystem(KawabungaSystem());
+    oxygenWorld.registerSystem(MoveSystem());
+    oxygenWorld.registerSystem(SpriteSystem());
+    oxygenWorld.registerSystem(KawabungaSystem());
 
-    oWorld.registerComponent<TimerComponent, double>(() => TimerComponent());
-    oWorld.registerComponent<VelocityComponent, Vector2>(
+    oxygenWorld
+        .registerComponent<TimerComponent, double>(() => TimerComponent());
+    oxygenWorld.registerComponent<VelocityComponent, Vector2>(
       () => VelocityComponent(),
     );
 
@@ -71,5 +74,10 @@ class AppGame extends OxygenGame with FPSCounter {
           ),
         );
     }
+  }
+
+  @override
+  void onMouseMove(PointerHoverInfo info) {
+    //
   }
 }

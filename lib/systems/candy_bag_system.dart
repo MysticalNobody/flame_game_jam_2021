@@ -1,22 +1,8 @@
 part of systems;
 
-class CandyBagSystem extends System {
-  void createBagEntity() {
-    // createEntity(
-    //     name: 'Entity $i',
-    //     position: size / 2,
-    //     size: Vector2.all(64),
-    //     angle: 0,
-    //   )
-    //     ..add<SpriteComponent, SpriteInit>(
-    //       SpriteInit(await loadSprite('pizza.png')),
-    //     )
-    //     ..add<VelocityComponent, Vector2>(
-    //       Vector2(
-    //         random.nextDouble() * 100 * (random.nextBool() ? 1 : -1),
-    //         random.nextDouble() * 100 * (random.nextBool() ? 1 : -1),
-    //       ),
-    //     );
+class CandyBagSystem extends BaseSystem with GameRef<AppGame>, UpdateSystem {
+  Future<void> createBagEntity() async {
+    // CandyBagEntity.create(game);
   }
 
   @override
@@ -27,5 +13,19 @@ class CandyBagSystem extends System {
   @override
   void init() {
     // TODO: implement init
+  }
+
+  @override
+  // TODO: implement filters
+  List<Filter<Component>> get filters => throw UnimplementedError();
+
+  @override
+  void renderEntity(Canvas canvas, Entity entity) {
+    // TODO: implement renderEntity
+  }
+
+  @override
+  void update(double delta) {
+    // TODO: implement update
   }
 }
