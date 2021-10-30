@@ -1,5 +1,4 @@
-import 'package:flame/extensions.dart';
-import 'package:flame_oxygen/flame_oxygen.dart';
+part of components;
 
 class VelocityComponent extends Component<Vector2> {
   late Vector2 _velocity;

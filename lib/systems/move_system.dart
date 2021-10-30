@@ -1,12 +1,4 @@
-import 'package:example/presentation/game/game_view.dart';
-import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
-import 'package:flame_oxygen/flame_oxygen.dart';
-import 'package:flutter/material.dart';
-
-import '../component/timer_component.dart';
-import '../component/velocity_component.dart';
-import '../main.dart';
+part of systems;
 
 class MoveSystem extends System with UpdateSystem, GameRef<AppGame> {
   Query? _query;
@@ -33,7 +25,7 @@ class MoveSystem extends System with UpdateSystem, GameRef<AppGame> {
       final position = entity.get<PositionComponent>()!.position
         ..add(velocity * delta);
 
-      final screenSize = Vector2.zero() & game!.size;
+      final screenSize = flame.Vector2.zero() & game!.size;
       if (!screenSize.containsPoint(position) ||
           !screenSize.containsPoint(position + size)) {
         velocity.setFrom(-velocity);
@@ -41,13 +33,14 @@ class MoveSystem extends System with UpdateSystem, GameRef<AppGame> {
         game!.createEntity(
           name: '${entity.name} says',
           position: position + size / 2,
-          size: Vector2.zero(),
+          size: flame.Vector2.zero(),
           anchor: Anchor.topCenter,
         )
           ..add<TextComponent, TextInit>(
             TextInit(
               'Kawabunga',
-              config: const TextPaintConfig(color: Colors.blue, fontSize: 12),
+              config:
+                  const flame.TextPaintConfig(color: Colors.blue, fontSize: 12),
             ),
           )
           ..add<TimerComponent, double>(3);

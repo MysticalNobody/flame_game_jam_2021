@@ -1,8 +1,4 @@
-import 'package:flame/game.dart';
-import 'package:flame_oxygen/flame_oxygen.dart';
-import 'package:flutter/material.dart';
-
-import '../component/timer_component.dart';
+part of systems;
 
 class KawabungaSystem extends BaseSystem with UpdateSystem {
   @override
@@ -15,7 +11,7 @@ class KawabungaSystem extends BaseSystem with UpdateSystem {
   void renderEntity(Canvas canvas, Entity entity) {
     final timer = entity.get<TimerComponent>()!;
     final textComponent = entity.get<TextComponent>()!;
-    final textRenderer = TextPaint(
+    final textRenderer = flame.TextPaint(
       config: textComponent.config.withColor(
         textComponent.config.color.withOpacity(1 - timer.percentage),
       ),
@@ -24,7 +20,7 @@ class KawabungaSystem extends BaseSystem with UpdateSystem {
     textRenderer.render(
       canvas,
       textComponent.text,
-      Vector2.zero(),
+      flame.Vector2.zero(),
     );
   }
 
@@ -33,7 +29,7 @@ class KawabungaSystem extends BaseSystem with UpdateSystem {
     for (final entity in entities) {
       final textComponent = entity.get<TextComponent>()!;
       final size = entity.get<SizeComponent>()!.size;
-      final textRenderer = TextPaint(config: textComponent.config);
+      final textRenderer = flame.TextPaint(config: textComponent.config);
       size.setFrom(textRenderer.measureText(textComponent.text));
 
       final timer = entity.get<TimerComponent>()!;
