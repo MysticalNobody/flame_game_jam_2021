@@ -10,30 +10,58 @@ import 'package:forge2d/forge2d.dart';
 
 List<Wall> createBoundaries(Forge2DGame game) {
   final worldBounds = game.camera.worldBounds;
-  final Vector2 bottomRight = worldBounds!.bottomRight.toVector2();
-  final Vector2 topRight = worldBounds.topRight.toVector2();
-  final Vector2 topLeft = worldBounds.topLeft.toVector2();
-  final Vector2 bottomLeft = worldBounds.bottomLeft.toVector2();
+  final Vector2 topRight = worldBounds!.topRight.toVector2().clone();
+  final Vector2 topLeft = worldBounds.topLeft.toVector2().clone();
+  final Vector2 bottomLeft = worldBounds.bottomLeft.toVector2().clone();
 
   return [
-    Wall(topLeft, topRight),
-    Wall(topRight, bottomRight),
-    Wall(bottomRight, bottomLeft),
-    Wall(bottomLeft, topLeft),
+    Wall(position: topLeft, length: worldBounds.bottom),
+    Wall(position: topRight..sub(Vector2(0, 10)), length: worldBounds.bottom),
+    Wall(
+      position: -bottomLeft,
+      length: worldBounds.right,
+      direction: WallDirection.horizontal,
+    ),
+    Wall(
+      position: topLeft,
+      length: worldBounds.right,
+      direction: WallDirection.horizontal,
+    ),
   ];
 }
 
+enum WallDirection {
+  horizontal,
+  vertical,
+}
+
 class Wall extends BodyComponent {
+  Wall({
+    required this.length,
+    required this.position,
+    this.direction = WallDirection.vertical,
+  });
   @override
   Paint paint = BasicPalette.white.paint();
-  final Vector2 start;
-  final Vector2 end;
-
-  Wall(this.start, this.end);
+  final Vector2 position;
+  final double length;
+  final WallDirection direction;
+  EdgeShape createShape() {
+    final shape = EdgeShape();
+    switch (direction) {
+      case WallDirection.horizontal:
+        shape.set(Vector2.zero(), Vector2(length, 0));
+        break;
+      case WallDirection.vertical:
+        shape.set(Vector2.zero(), -Vector2(0, length));
+        break;
+    }
+    return shape;
+  }
 
   @override
   Body createBody() {
-    final shape = EdgeShape()..set(start, end);
+    final shape = createShape();
 
     final fixtureDef = FixtureDef(shape)
       ..restitution = 0.0
@@ -41,7 +69,7 @@ class Wall extends BodyComponent {
 
     final bodyDef = BodyDef()
       ..userData = this // To be able to determine object in collision
-      ..position = Vector2.zero()
+      ..position = position
       ..type = BodyType.static;
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
