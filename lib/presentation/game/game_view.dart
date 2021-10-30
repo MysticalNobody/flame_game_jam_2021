@@ -13,7 +13,7 @@ import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:just_audio/just_audio.dart';
+// import 'package:just_audio/just_audio.dart';
 
 class AppGameView extends StatefulWidget {
   const AppGameView({
@@ -27,7 +27,7 @@ class AppGameView extends StatefulWidget {
 }
 
 class _AppGameViewState extends State<AppGameView> {
-  final player = AudioPlayer();
+  // final player = AudioPlayer();
   @override
   void initState() {
     play();
@@ -35,13 +35,13 @@ class _AppGameViewState extends State<AppGameView> {
   }
 
   Future<void> play() async {
-    await player.setAsset('assets/audio/pixies-where-is-my-mind.mp3');
-    await player.play();
+    // await player.setAsset('assets/audio/pixies-where-is-my-mind.mp3');
+    // await player.play();
   }
 
   @override
   void dispose() {
-    player.stop();
+    // player.stop();
     super.dispose();
   }
 
@@ -127,6 +127,13 @@ class AppGame extends Forge2DGame
       ),
     );
     await onAssetsLoad();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // TODO: implement render
+    print('');
+    super.render(canvas);
   }
 
   @override
