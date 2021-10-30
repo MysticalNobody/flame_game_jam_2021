@@ -14,11 +14,17 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final gameWidget = AppGame(
-    onAssetsLoad: () async {
-      log('message');
-    },
-  );
+  late AppGame gameWidget;
+
+  @override
+  void initState() {
+    super.initState();
+    gameWidget = AppGame(
+      onAssetsLoad: () async {
+        log('message');
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

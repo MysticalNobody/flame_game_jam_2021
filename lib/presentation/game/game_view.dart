@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
+import 'package:example/component/camera_mover_component.dart';
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
@@ -13,7 +15,6 @@ import 'package:flame/parallax.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 // import 'package:just_audio/just_audio.dart';
 
@@ -54,7 +55,7 @@ class _AppGameViewState extends State<AppGameView> {
 }
 
 class AppGame extends Forge2DGame
-    with KeyboardEvents, FPSCounter, HasDraggableComponents {
+    with FPSCounter, HasDraggableComponents, MultiTouchDragDetector {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -138,5 +139,39 @@ class AppGame extends Forge2DGame
     // );
     await onAssetsLoad();
     await super.onLoad();
+    final camComponent = CameraMoverComponent(gameCamera);
+    await add(camComponent);
+    gameCamera.initCameraPosition();
+  }
+
+  @override
+  void onDragStart(int pointerId, DragStartInfo info) {
+    log(info.eventPosition.game.toString());
+    super.onDragStart(pointerId, info);
+  }
+
+  @override
+  void onDragUpdate(int pointerId, DragUpdateInfo event) {
+    gameCamera.position = event.eventPosition.game;
+    log(event.eventPosition.game.toString());
+    super.onDragUpdate(pointerId, event);
+  }
+
+  @override
+  void onDragEnd(int pointerId, DragEndInfo event) {
+    super.onDragEnd(pointerId, event);
+  }
+
+  @override
+  void onDragCancel(int pointerId) {
+    super.onDragCancel(pointerId);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!gameCamera.velocity.isZero()) {
+      gameCamera.position.add(gameCamera.velocity * dt * 10);
+    }
   }
 }
