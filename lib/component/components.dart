@@ -1,10 +1,9 @@
 library components;
 
-import 'dart:ui';
-
-import 'package:example/gen/assets.gen.dart';
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flame_forge2d/sprite_body_component.dart';
+import 'package:forge2d/src/dynamics/body.dart';
 
 part 'background_component.dart';
 part 'candy_bag_component.dart';

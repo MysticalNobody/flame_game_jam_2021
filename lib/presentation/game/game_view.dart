@@ -6,6 +6,7 @@ import 'package:example/presentation/game/game_widget.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -35,10 +36,13 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   });
   final FutureVoidCallback onAssetsLoad;
   late final GameCamera gameCamera = GameCamera(game: this);
+  late final spritesCache = SpritesCache(game: this);
+  Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
   @override
   Future<void> onLoad() async {
-    final bg = await loadSprite('bg.jpg');
+    final bg = getSprite(SpritesTitles.bg);
     gameCamera.followPosition();
+    await spritesCache.onLoad();
     final aspectRatio = size.x / size.y;
     final worldSize = Vector2(
       bg.srcSize.x * aspectRatio,
@@ -47,7 +51,7 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
     camera
       ..worldBounds = worldSize.toRect()
       ..zoom = 0.8;
-    final enemy = await loadSprite('enemy.png');
+    final enemy = getSprite(SpritesTitles.enemy);
     await add(BackgroundComponent(worldSize, bg));
     await add(
       EnemyComponent(

@@ -10,13 +10,20 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets\images\bg.jpg
+  /// File path: assets/images/bg.jpg
   AssetGenImage get bg => const AssetGenImage('assets/images/bg.jpg');
 
-  /// File path: assets\images\chopper.png
+  /// File path: assets/images/candy_bag.jpg
+  AssetGenImage get candyBag =>
+      const AssetGenImage('assets/images/candy_bag.jpg');
+
+  /// File path: assets/images/chopper.png
   AssetGenImage get chopper => const AssetGenImage('assets/images/chopper.png');
 
-  /// File path: assets\images\pizza.png
+  /// File path: assets/images/enemy.png
+  AssetGenImage get enemy => const AssetGenImage('assets/images/enemy.png');
+
+  /// File path: assets/images/pizza.png
   AssetGenImage get pizza => const AssetGenImage('assets/images/pizza.png');
 }
 
