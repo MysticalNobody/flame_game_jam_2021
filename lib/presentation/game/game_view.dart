@@ -54,8 +54,7 @@ class _AppGameViewState extends State<AppGameView> {
   }
 }
 
-class AppGame extends Forge2DGame
-    with FPSCounter, HasDraggableComponents, MultiTouchDragDetector {
+class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -108,7 +107,6 @@ class AppGame extends Forge2DGame
       size: Vector2(100, 100),
     );
     await add(com);
-    gameCamera.followComponent(com.positionComponent);
 
     // await add(
     //   YoungsterComponent(
@@ -139,8 +137,6 @@ class AppGame extends Forge2DGame
     // );
     await onAssetsLoad();
     await super.onLoad();
-    final camComponent = CameraMoverComponent(gameCamera);
-    await add(camComponent);
     gameCamera.initCameraPosition();
   }
 
@@ -152,7 +148,8 @@ class AppGame extends Forge2DGame
 
   @override
   void onDragUpdate(int pointerId, DragUpdateInfo event) {
-    gameCamera.position = event.eventPosition.game;
+    camera.followVector2(
+        Vector2(event.eventPosition.game.x, -event.eventPosition.game.y));
     log(event.eventPosition.game.toString());
     super.onDragUpdate(pointerId, event);
   }
