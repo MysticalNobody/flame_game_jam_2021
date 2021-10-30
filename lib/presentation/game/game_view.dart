@@ -74,7 +74,6 @@ class AppGame extends Forge2DGame
   double get worldBottomY => worldBounds.bottom - 100;
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
     await spritesCache.onLoad();
 
     gameCamera.followPosition();
@@ -91,12 +90,14 @@ class AppGame extends Forge2DGame
     addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
     await add(BackgroundComponent(worldSize, bg));
-    await add(YoungsterComponent(
-      game: this,
-      title: SpritesTitles.ghost,
-      position: Vector2(700, -225),
-      size: Vector2(100, 100),
-    ));
+    await add(
+      YoungsterComponent(
+        game: this,
+        title: SpritesTitles.ghost,
+        position: Vector2(700, -225),
+        size: Vector2(100, 100),
+      ),
+    );
 
     await add(BackgroundComponent(worldSize, bg));
     await add(
@@ -127,13 +128,7 @@ class AppGame extends Forge2DGame
       ),
     );
     await onAssetsLoad();
-  }
-
-  @override
-  void render(Canvas canvas) {
-    // TODO: implement render
-    print('');
-    super.render(canvas);
+    await super.onLoad();
   }
 
   @override
