@@ -270,7 +270,6 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
         Advanced detectors will override basic detectors and the later will not receive events
       ''',
     );
-
     if (hasBasicDetectors) {
       internalAppGameWidget = applyBasicGesturesDetectors(
         widget.game,

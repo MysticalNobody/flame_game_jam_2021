@@ -107,7 +107,13 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       size: Vector2(100, 100),
     );
     await add(com);
-
+    // gameCamera.followComponent(com.positionComponent);
+    final killingObstacle = KillingObstacleComponent.create(
+      game: this,
+      position: Vector2(350, -145),
+    );
+    await add(killingObstacle);
+    killingObstacle.moveAlongPoints();
     // await add(
     //   YoungsterComponent(
     //     game: this,
@@ -157,11 +163,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   @override
   void onDragEnd(int pointerId, DragEndInfo event) {
     super.onDragEnd(pointerId, event);
-  }
-
-  @override
-  void onDragCancel(int pointerId) {
-    super.onDragCancel(pointerId);
   }
 
   @override
