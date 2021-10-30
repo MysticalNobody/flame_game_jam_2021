@@ -52,8 +52,8 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
     await add(
       EnemyComponent(
         enemy,
-        Vector2(10, 10),
-        Vector2(0, -20),
+        Vector2(300, 300),
+        Vector2(300, -100),
       ),
     );
     await addAll(createBoundaries(this));
