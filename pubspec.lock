@@ -239,6 +239,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.2-releasecandidate.15"
+  flame_oxygen:
+    dependency: "direct main"
+    description:
+      path: "packages/flame_oxygen"
+      relative: true
+    source: path
+    version: "0.1.0-releasecandidate.13"
   flame_tiled:
     dependency: "direct main"
     description:
@@ -448,6 +455,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  oxygen:
+    dependency: transitive
+    description:
+      name: oxygen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   package_config:
     dependency: transitive
     description:
