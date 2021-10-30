@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:example/component/components.dart';
+import 'package:example/core/core.dart';
 import 'package:example/systems/systems.dart';
-import 'package:example/utils/typedefs.dart';
 import 'package:flame/game.dart';
 import 'package:flame_oxygen/flame_oxygen.dart';
 import 'package:flutter/foundation.dart';
