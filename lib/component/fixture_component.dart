@@ -33,6 +33,7 @@ class FixtureComponent extends SpriteBodyComponent {
         title: SpritesTitles.candyBag,
         position: position,
       );
+
   factory FixtureComponent.createGhost({
     required AppGame game,
     required Vector2 position,
@@ -48,7 +49,7 @@ class FixtureComponent extends SpriteBodyComponent {
   final SpritesTitles title;
   final AppGame game;
   final Sprite sprite;
-  Vector2 getSpriteSize() => sprite.originalSize * game.aspectRatio;
+  Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
   Body createBody() {
