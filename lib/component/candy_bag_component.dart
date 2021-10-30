@@ -1,3 +1,5 @@
 part of components;
 
-class CandyBagComponent extends ValueComponent<void> {}
+class CandyComponent extends PositionComponent {
+  CandyComponent() : super(priority: ComponentsPriority.candy.index);
+}
