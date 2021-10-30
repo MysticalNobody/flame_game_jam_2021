@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
@@ -76,14 +77,13 @@ class AppGame extends Forge2DGame
   Future<void> onLoad() async {
     await spritesCache.onLoad();
 
-    gameCamera.followPosition();
     final bg = getSprite(SpritesTitles.bg);
-
+    setAspectRatio();
+    final deviceHeight = window.physicalSize.height / window.devicePixelRatio;
     final worldSize = Vector2(bg.srcSize.x, bg.srcSize.y) * aspectRatio;
-
     camera
       ..worldBounds = worldSize.toRect()
-      ..zoom = 0.8;
+      ..zoom = deviceHeight / (bg.srcSize.y * aspectRatio);
     await addAll(createBoundaries(this));
 
     addContactCallback(WinContactCallback(game: this, onWin: () {}));
@@ -129,6 +129,7 @@ class AppGame extends Forge2DGame
     );
     await onAssetsLoad();
     await super.onLoad();
+    gameCamera.initCameraPosition();
   }
 
   @override

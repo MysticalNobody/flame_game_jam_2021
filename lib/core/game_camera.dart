@@ -10,6 +10,12 @@ class GameCamera {
   Vector2 velocity = Vector2.zero();
 
   CameraFollower follower = CameraFollower.position;
+  void initCameraPosition() {
+    follower = CameraFollower.position;
+    position.setFrom(game.worldBounds.bottomLeft.toVector2());
+    game.camera.followVector2(position, relativeOffset: Anchor.topLeft);
+  }
+
   void followPosition() {
     follower = CameraFollower.position;
     position.setFrom(game.camera.position);
