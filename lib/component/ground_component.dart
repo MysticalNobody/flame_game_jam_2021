@@ -18,7 +18,7 @@ List<Wall> createBoundaries(AppGame game) {
     Wall(position: topLeft, length: worldBounds.bottom),
     Wall(position: topRight..sub(Vector2(0, 10)), length: worldBounds.bottom),
     Wall(
-      position: -bottomLeft,
+      position: -bottomLeft + Vector2(0, 50),
       length: worldBounds.right,
       direction: WallDirection.horizontal,
     ),
