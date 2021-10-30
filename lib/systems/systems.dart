@@ -5,6 +5,7 @@ import 'package:example/flame_oxygen/component.dart';
 import 'package:example/flame_oxygen/system.dart';
 import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/game.dart' as flame;
+import 'package:flame/input.dart';
 import 'package:flame/src/extensions/rect.dart';
 import 'package:flutter/material.dart';
 import 'package:oxygen/oxygen.dart';
