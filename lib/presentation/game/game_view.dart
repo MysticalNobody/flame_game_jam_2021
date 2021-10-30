@@ -39,7 +39,7 @@ class _AppGameViewState extends State<AppGameView> {
 
   Future<void> play() async {
     await player.setAsset('assets/audio/pixies-where-is-my-mind.mp3');
-    player.play();
+    // player.play();
   }
 
   @override

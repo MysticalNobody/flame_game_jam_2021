@@ -93,7 +93,8 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   void update(double dt) {
     super.update(dt);
     if (throwingTrajectory != null && dragging) {
-      throwingTrajectory!.showDrag(body.position, dragDiff!);
+      throwingTrajectory!
+          .showDrag(Vector2(100 + body.position.x, body.position.y), dragDiff!);
     } else {
       throwingTrajectory!.hideDrag();
     }
@@ -117,10 +118,10 @@ class ThrowingTrajectoryComponent extends PositionComponent with HasPaint {
     super.render(canvas);
     if (!show) return;
     for (int time = 0; time < 10; time++) {
-      double x = position.x -
+      double x = -position.x -
           velocity.x * time -
           (game.world.gravity.x / 2) * time * time;
-      double y = position.y +
+      double y = -position.y +
           (velocity.y * time - (game.world.gravity.y / 2) * time * time);
       canvas.drawCircle(Offset(x, y), 5, paint);
     }
