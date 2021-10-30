@@ -40,9 +40,10 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
   @override
   Future<void> onLoad() async {
-    final bg = getSprite(SpritesTitles.bg);
-    gameCamera.followPosition();
     await spritesCache.onLoad();
+
+    gameCamera.followPosition();
+    final bg = getSprite(SpritesTitles.bg);
     final aspectRatio = size.x / size.y;
     final worldSize = Vector2(
       bg.srcSize.x * aspectRatio,
@@ -51,8 +52,9 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
     camera
       ..worldBounds = worldSize.toRect()
       ..zoom = 0.8;
-    final enemy = getSprite(SpritesTitles.enemy);
     await add(BackgroundComponent(worldSize, bg));
+
+    final enemy = getSprite(SpritesTitles.enemy);
     await add(
       EnemyComponent(
         enemy,
