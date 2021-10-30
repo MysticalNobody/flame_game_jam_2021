@@ -1,10 +1,11 @@
 part of entities;
 
-class CandyBagEntityFactory {
-  CandyBagEntityFactory._();
-  static final size = flame.Vector2.zero();
-  static const angle = 0.0;
-  static void create({required AppGame game, required int index}) {
+class CandyBagEntity {
+  CandyBagEntity.of(this.game);
+  final AppGame game;
+  final size = flame.Vector2.zero();
+  final angle = 0.0;
+  void create({required int index}) {
     //  game.createEntity(
     //   name: '${EntityTitles.candy} $index',
     //   position: size / 2,
