@@ -1,5 +1,6 @@
 library components;
 
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:oxygen/oxygen.dart';
 
@@ -12,3 +13,4 @@ part 'candy_bag_component.dart';
 part 'candy_component.dart';
 part 'user_component.dart';
 part 'yangster_component.dart';
+part 'background_component.dart';
