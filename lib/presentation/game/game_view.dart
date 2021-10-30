@@ -1,5 +1,4 @@
 import 'package:example/component/components.dart';
-import 'package:example/component/enemy_component.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
 import 'package:example/presentation/game/game_widget.dart';
@@ -38,28 +37,35 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
+  double aspectRatio = 1.0;
+
+  void setAspectRatio() => aspectRatio = size.x / size.y;
+
+  @override
+  void onGameResize(Vector2 canvasSize) {
+    super.onGameResize(canvasSize);
+    setAspectRatio();
+  }
+
   @override
   Future<void> onLoad() async {
     await spritesCache.onLoad();
 
     gameCamera.followPosition();
     final bg = getSprite(SpritesTitles.bg);
-    final aspectRatio = size.x / size.y;
-    final worldSize = Vector2(
-      bg.srcSize.x * aspectRatio,
-      bg.srcSize.y * aspectRatio,
-    );
+
+    final worldSize = Vector2(bg.srcSize.x, bg.srcSize.y) * aspectRatio;
+
     camera
       ..worldBounds = worldSize.toRect()
       ..zoom = 0.8;
+
     await add(BackgroundComponent(worldSize, bg));
 
-    final enemy = getSprite(SpritesTitles.enemy);
     await add(
-      EnemyComponent(
-        enemy,
-        Vector2(300, 300),
-        Vector2(300, -100),
+      FixtureComponent.createGhost(
+        game: this,
+        position: Vector2(300, -100),
       ),
     );
     await addAll(createBoundaries(this));

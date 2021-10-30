@@ -2,8 +2,9 @@ part of core;
 
 enum SpritesTitles {
   candyBag,
-  enemy,
+  ghost,
   bg,
+  wall,
 }
 
 class SpritesCache with Loadable {
