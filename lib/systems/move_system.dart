@@ -1,10 +1,4 @@
-import 'package:example/component/components.dart';
-import 'package:flame/extensions.dart';
-import 'package:flame/game.dart' as flame;
-import 'package:flame_oxygen/flame_oxygen.dart';
-import 'package:flutter/material.dart';
-
-import '../main.dart';
+part of systems;
 
 class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
   Query? _query;
@@ -31,7 +25,7 @@ class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
       final position = entity.get<PositionComponent>()!.position
         ..add(velocity * delta);
 
-      final screenSize = Vector2.zero() & game!.size;
+      final screenSize = flame.Vector2.zero() & game!.size;
       if (!screenSize.containsPoint(position) ||
           !screenSize.containsPoint(position + size)) {
         velocity.setFrom(-velocity);
@@ -39,7 +33,7 @@ class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
         game!.createEntity(
           name: '${entity.name} says',
           position: position + size / 2,
-          size: Vector2.zero(),
+          size: flame.Vector2.zero(),
           anchor: Anchor.topCenter,
         )
           ..add<TextComponent, TextInit>(

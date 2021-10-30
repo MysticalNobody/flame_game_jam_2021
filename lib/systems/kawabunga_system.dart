@@ -1,7 +1,4 @@
-import 'package:example/component/components.dart';
-import 'package:flame/game.dart' as flame;
-import 'package:flame_oxygen/flame_oxygen.dart';
-import 'package:flutter/material.dart';
+part of systems;
 
 class KawabungaSystem extends BaseSystem with UpdateSystem {
   @override

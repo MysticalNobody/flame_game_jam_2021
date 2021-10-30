@@ -1,21 +1,19 @@
-import 'package:flame/game.dart';
-import 'package:flame_oxygen/flame_oxygen.dart';
-import 'package:flutter/material.dart';
+part of systems;
 
 class DebugSystem extends BaseSystem {
   final debugPaint = Paint()
     ..color = Colors.green
     ..style = PaintingStyle.stroke;
 
-  final textPainter = TextPaint(
-    config: const TextPaintConfig(
+  final textPainter = flame.TextPaint(
+    config: const flame.TextPaintConfig(
       color: Colors.green,
       fontSize: 10,
     ),
   );
 
-  final statusPainter = TextPaint(
-    config: const TextPaintConfig(
+  final statusPainter = flame.TextPaint(
+    config: const flame.TextPaintConfig(
       color: Colors.green,
       fontSize: 16,
     ),
@@ -30,10 +28,10 @@ class DebugSystem extends BaseSystem {
     statusPainter.render(
       canvas,
       [
-        'FPS: ${(world!.game as FPSCounter).fps()}',
+        'FPS: ${(world!.game as flame.FPSCounter).fps()}',
         'Entities: ${world!.entities.length}',
       ].join('\n'),
-      Vector2.zero(),
+      flame.Vector2.zero(),
     );
   }
 
@@ -41,7 +39,7 @@ class DebugSystem extends BaseSystem {
   void renderEntity(Canvas canvas, Entity entity) {
     final size = entity.get<SizeComponent>()!.size;
 
-    canvas.drawRect(Vector2.zero() & size, debugPaint);
+    canvas.drawRect(flame.Vector2.zero() & size, debugPaint);
 
     textPainter.render(
       canvas,
@@ -51,12 +49,12 @@ class DebugSystem extends BaseSystem {
         'angle: ${entity.get<AngleComponent>()?.radians ?? 0}',
         'anchor: ${entity.get<AnchorComponent>()?.anchor ?? Anchor.topLeft}',
       ].join('\n'),
-      Vector2(size.x + 2, 0),
+      flame.Vector2(size.x + 2, 0),
     );
     textPainter.render(
       canvas,
       entity.name ?? '',
-      Vector2(size.x / 2, size.y + 2),
+      flame.Vector2(size.x / 2, size.y + 2),
       anchor: Anchor.topCenter,
     );
   }
