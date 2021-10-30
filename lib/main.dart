@@ -13,10 +13,31 @@ import 'system/move_system.dart';
 import 'system/sprite_system.dart';
 
 void main() {
-  runApp(GameWidget(game: ExampleGame()));
+  runApp(
+    MaterialApp(
+      home: GameWidget(
+        game: ExampleGame(
+          onAssetsLoad: () async {},
+        ),
+      ),
+    ),
+  );
 }
 
+typedef FutureVoidCallback = Future<void> Function();
+
 class ExampleGame extends OxygenGame with FPSCounter {
+  ExampleGame({
+    required this.onAssetsLoad,
+  });
+  final FutureVoidCallback onAssetsLoad;
+
+  @override
+  Future<void> onLoad() async {
+    await onAssetsLoad();
+    return super.onLoad();
+  }
+
   @override
   Future<void> init() async {
     if (kDebugMode) {
