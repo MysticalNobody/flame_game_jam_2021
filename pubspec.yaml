@@ -15,7 +15,6 @@ dependencies:
 
   flutter_localizations:
     sdk: flutter
-  oxygen: ^0.2.0
   shared_preferences: ^2.0.8
   json_annotation: ^4.3.0
   # The following adds the Cupertino Icons font to your application.

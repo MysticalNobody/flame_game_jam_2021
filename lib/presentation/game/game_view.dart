@@ -1,13 +1,7 @@
-import 'dart:math' as math;
-
-import 'package:example/component/components.dart';
 import 'package:example/core/core.dart';
-import 'package:example/flame_oxygen/component.dart';
-import 'package:example/flame_oxygen/oxygen_game.dart';
 import 'package:example/presentation/game/game_widget.dart';
-import 'package:example/systems/systems.dart';
 import 'package:flame/game.dart';
-import 'package:flame/input.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -29,7 +23,7 @@ class _AppGameViewState extends State<AppGameView> {
   }
 }
 
-class AppGame extends OxygenGame {
+class AppGame extends Forge2DGame {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -37,47 +31,8 @@ class AppGame extends OxygenGame {
 
   @override
   Future<void> onLoad() async {
+    // this.remove(c);
     await onAssetsLoad();
     return super.onLoad();
-  }
-
-  @override
-  Future<void> init() async {
-    if (kDebugMode) {
-      oxygenWorld.registerSystem(DebugSystem());
-    }
-    oxygenWorld.registerSystem(MoveSystem());
-    oxygenWorld.registerSystem(SpriteSystem());
-    oxygenWorld.registerSystem(KawabungaSystem());
-
-    oxygenWorld
-        .registerComponent<TimerComponent, double>(() => TimerComponent());
-    oxygenWorld.registerComponent<VelocityComponent, Vector2>(
-      () => VelocityComponent(),
-    );
-
-    final random = math.Random();
-    for (var i = 0; i < 10; i++) {
-      createEntity(
-        name: 'Entity $i',
-        position: size / 2,
-        size: Vector2.all(64),
-        angle: 0,
-      )
-        ..add<SpriteComponent, SpriteInit>(
-          SpriteInit(await loadSprite('pizza.png')),
-        )
-        ..add<VelocityComponent, Vector2>(
-          Vector2(
-            random.nextDouble() * 100 * (random.nextBool() ? 1 : -1),
-            random.nextDouble() * 100 * (random.nextBool() ? 1 : -1),
-          ),
-        );
-    }
-  }
-
-  @override
-  void onMouseMove(PointerHoverInfo info) {
-    //
   }
 }
