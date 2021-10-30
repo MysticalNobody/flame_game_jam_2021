@@ -176,9 +176,9 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
       return;
     }
     _checkOverlays(widget.initialActiveOverlays!.toSet());
-    widget.initialActiveOverlays!.forEach((key) {
+    for (var key in widget.initialActiveOverlays!) {
       widget.game.overlays.add(key);
-    });
+    }
   }
 
   @override
@@ -231,12 +231,12 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
   }
 
   void _checkOverlays(Set<String> overlays) {
-    overlays.forEach((overlayKey) {
+    for (var overlayKey in overlays) {
       assert(
         widget.overlayBuilderMap?.containsKey(overlayKey) ?? false,
         'A non mapped overlay has been added: $overlayKey',
       );
-    });
+    }
   }
 
   void onChangeActiveOverlays() {
@@ -308,7 +308,7 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
           child: Container(
             color: widget.game.backgroundColor(),
             child: LayoutBuilder(
-              builder: (_, BoxConstraints constraints) {
+              builder: (_, constraints) {
                 widget.game.onGameResize(constraints.biggest.toVector2());
                 return FutureBuilder(
                   future: _loaderFuture,
@@ -322,6 +322,7 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
                       }
                     }
                     if (snapshot.connectionState == ConnectionState.done) {
+                      widget.game.onGameResize(constraints.biggest.toVector2());
                       return Stack(children: stackedWidgets);
                     }
                     return widget.loadingBuilder?.call(context) ?? Container();
@@ -351,7 +352,7 @@ class _AppGameWidgetState<T extends Game> extends State<AppGameWidget<T>> {
     if (widget.overlayBuilderMap == null) {
       return stackWidgets;
     }
-    final widgets = initialActiveOverlays.map((String overlayKey) {
+    final widgets = initialActiveOverlays.map((overlayKey) {
       final builder = widget.overlayBuilderMap![overlayKey]!;
       return KeyedSubtree(
         key: ValueKey(overlayKey),
