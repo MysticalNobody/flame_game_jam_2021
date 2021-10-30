@@ -1,10 +1,9 @@
+import 'package:example/component/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
+import 'package:flame/game.dart' as flame;
 import 'package:flame_oxygen/flame_oxygen.dart';
 import 'package:flutter/material.dart';
 
-import '../component/timer_component.dart';
-import '../component/velocity_component.dart';
 import '../main.dart';
 
 class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
@@ -46,7 +45,8 @@ class MoveSystem extends System with UpdateSystem, GameRef<ExampleGame> {
           ..add<TextComponent, TextInit>(
             TextInit(
               'Kawabunga',
-              config: const TextPaintConfig(color: Colors.blue, fontSize: 12),
+              config:
+                  const flame.TextPaintConfig(color: Colors.blue, fontSize: 12),
             ),
           )
           ..add<TimerComponent, double>(3);

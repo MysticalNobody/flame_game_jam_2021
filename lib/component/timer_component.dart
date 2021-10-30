@@ -1,4 +1,4 @@
-import 'package:flame_oxygen/flame_oxygen.dart';
+part of components;
 
 class TimerComponent extends Component<double> {
   late double _maxTime;
