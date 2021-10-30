@@ -5,7 +5,7 @@ enum CameraFollower { position, component }
 class GameCamera {
   GameCamera({required this.game});
   static const worldBounds = Rect.fromLTWH(0, 0, 200, 200);
-  static const moveStep = 4;
+  static const moveStep = 12.0;
   final AppGame game;
   Vector2 position = Vector2.zero();
   Vector2 velocity = Vector2.zero();
@@ -27,16 +27,16 @@ class GameCamera {
     print('direction $direction');
     switch (direction) {
       case AxisDirection.down:
-        velocity.y -= moveStep;
+        velocity.y = moveStep;
         break;
       case AxisDirection.up:
-        velocity.y += moveStep;
+        velocity.y = -moveStep;
         break;
       case AxisDirection.right:
-        velocity.x += moveStep;
+        velocity.x = moveStep;
         break;
       case AxisDirection.left:
-        velocity.x -= moveStep;
+        velocity.x = -moveStep;
         break;
     }
   }

@@ -34,7 +34,7 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   late final GameCamera gameCamera = GameCamera(game: this);
   @override
   Future<void> onLoad() async {
-    camera.worldBounds = GameCamera.worldBounds;
+    // camera.worldBounds = GameCamera.worldBounds;
     gameCamera.followPosition();
 
     // this.remove(c);
