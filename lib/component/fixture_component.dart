@@ -6,6 +6,7 @@ class FixtureComponent extends SpriteBodyComponent {
     required this.game,
     required this.position,
     required Vector2 size,
+    this.type = BodyType.dynamic,
   })  : sprite = game.getSprite(title),
         super(
           game.getSprite(title),
@@ -20,6 +21,7 @@ class FixtureComponent extends SpriteBodyComponent {
         game: game,
         title: SpritesTitles.wall,
         position: position,
+        type: BodyType.static,
         size: Vector2(100, 100),
       );
 
@@ -49,6 +51,8 @@ class FixtureComponent extends SpriteBodyComponent {
   final SpritesTitles title;
   final AppGame game;
   final Sprite sprite;
+  final BodyType type;
+
   Vector2 getSpriteSize() => sprite.srcSize * game.aspectRatio;
 
   @override
@@ -71,7 +75,7 @@ class FixtureComponent extends SpriteBodyComponent {
     final bodyDef = BodyDef()
       ..position = position
       ..angle = (position.x + position.y) / 2 * 3.14
-      ..type = BodyType.dynamic;
+      ..type = type;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }

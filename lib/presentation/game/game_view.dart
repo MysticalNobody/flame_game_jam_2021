@@ -49,6 +49,8 @@ class AppGame extends Forge2DGame
     setAspectRatio();
   }
 
+  Rect get worldBounds => camera.worldBounds!;
+  double get worldBottomY => worldBounds.bottom - 100;
   @override
   Future<void> onLoad() async {
     await spritesCache.onLoad();
@@ -70,6 +72,18 @@ class AppGame extends Forge2DGame
       size: Vector2(100, 100),
     ));
 
+    await add(
+      FixtureComponent.createWall(
+        game: this,
+        position: Vector2(600, -worldBottomY),
+      ),
+    );
+    await add(
+      FixtureComponent.createCandyBag(
+        game: this,
+        position: Vector2(500, -worldBottomY),
+      ),
+    );
     await add(
       FixtureComponent.createGhost(
         game: this,

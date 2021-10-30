@@ -1,16 +1,16 @@
 import 'dart:ui';
 
+import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:forge2d/forge2d.dart';
 
-List<Wall> createBoundaries(Forge2DGame game) {
-  final worldBounds = game.camera.worldBounds;
-  final Vector2 topRight = worldBounds!.topRight.toVector2().clone();
+List<Wall> createBoundaries(AppGame game) {
+  final worldBounds = game.worldBounds;
+  final Vector2 topRight = worldBounds.topRight.toVector2().clone();
   final Vector2 topLeft = worldBounds.topLeft.toVector2().clone();
   final Vector2 bottomLeft = worldBounds.bottomLeft.toVector2().clone();
 
