@@ -2,6 +2,7 @@ import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
 import 'package:example/presentation/game/game_widget.dart';
+import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -29,7 +30,8 @@ class _AppGameViewState extends State<AppGameView> {
   }
 }
 
-class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
+class AppGame extends Forge2DGame
+    with KeyboardEvents, FPSCounter, HasDraggableComponents {
   AppGame({
     required this.onAssetsLoad,
   });
@@ -61,6 +63,12 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
       ..zoom = 0.8;
 
     await add(BackgroundComponent(worldSize, bg));
+    await add(YoungsterComponent(
+      game: this,
+      title: SpritesTitles.ghost,
+      position: Vector2(400, -100),
+      size: Vector2(100, 100),
+    ));
 
     await add(
       FixtureComponent.createGhost(
