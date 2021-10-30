@@ -47,6 +47,8 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
     setAspectRatio();
   }
 
+  Rect get worldBounds => camera.worldBounds!;
+  double get worldBottomY => worldBounds.bottom - 100;
   @override
   Future<void> onLoad() async {
     await spritesCache.onLoad();
@@ -62,6 +64,18 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
 
     await add(BackgroundComponent(worldSize, bg));
 
+    await add(
+      FixtureComponent.createWall(
+        game: this,
+        position: Vector2(600, -worldBottomY),
+      ),
+    );
+    await add(
+      FixtureComponent.createCandyBag(
+        game: this,
+        position: Vector2(500, -worldBottomY),
+      ),
+    );
     await add(
       FixtureComponent.createGhost(
         game: this,
