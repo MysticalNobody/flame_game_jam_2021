@@ -1,7 +1,7 @@
 library systems;
 
 import 'package:example/component/components.dart';
-import 'package:example/main.dart';
+import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/game.dart' as flame;
 import 'package:flame/src/extensions/rect.dart';
 import 'package:flame_oxygen/flame_oxygen.dart';

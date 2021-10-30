@@ -1,11 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:example/component/timer_component.dart';
-import 'package:example/component/velocity_component.dart';
-import 'package:example/system/debug_system.dart';
-import 'package:example/system/kawabunga_system.dart';
-import 'package:example/system/move_system.dart';
-import 'package:example/system/sprite_system.dart';
+import 'package:example/component/components.dart';
+import 'package:example/systems/systems.dart';
 import 'package:example/utils/typedefs.dart';
 import 'package:flame/game.dart';
 import 'package:flame_oxygen/flame_oxygen.dart';
