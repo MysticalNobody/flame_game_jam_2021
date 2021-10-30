@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:example/component/components.dart';
 import 'package:example/core/core.dart';
+import 'package:example/presentation/game/game_widget.dart';
 import 'package:example/systems/systems.dart';
 import 'package:flame/game.dart';
 import 'package:flame_oxygen/flame_oxygen.dart';
@@ -22,7 +23,7 @@ class AppGameView extends StatefulWidget {
 class _AppGameViewState extends State<AppGameView> {
   @override
   Widget build(BuildContext context) {
-    return GameWidget(game: widget.game);
+    return AppGameWidget(game: widget.game);
   }
 }
 
@@ -41,14 +42,14 @@ class AppGame extends OxygenGame with FPSCounter {
   @override
   Future<void> init() async {
     if (kDebugMode) {
-      world.registerSystem(DebugSystem());
+      oWorld.registerSystem(DebugSystem());
     }
-    world.registerSystem(MoveSystem());
-    world.registerSystem(SpriteSystem());
-    world.registerSystem(KawabungaSystem());
+    oWorld.registerSystem(MoveSystem());
+    oWorld.registerSystem(SpriteSystem());
+    oWorld.registerSystem(KawabungaSystem());
 
-    world.registerComponent<TimerComponent, double>(() => TimerComponent());
-    world.registerComponent<VelocityComponent, Vector2>(
+    oWorld.registerComponent<TimerComponent, double>(() => TimerComponent());
+    oWorld.registerComponent<VelocityComponent, Vector2>(
       () => VelocityComponent(),
     );
 
