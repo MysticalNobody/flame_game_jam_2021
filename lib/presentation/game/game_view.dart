@@ -3,6 +3,7 @@ import 'package:example/component/enemy_component.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
 import 'package:example/presentation/game/game_widget.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
@@ -37,12 +38,17 @@ class AppGame extends Forge2DGame with KeyboardEvents, FPSCounter {
   @override
   Future<void> onLoad() async {
     final bg = await loadSprite('bg.jpg');
-    camera.worldBounds = bg.srcSize.toRect();
     gameCamera.followPosition();
-
-    // this.remove(c);
+    final aspectRatio = size.x / size.y;
+    final worldSize = Vector2(
+      bg.srcSize.x * aspectRatio,
+      bg.srcSize.y * aspectRatio,
+    );
+    camera
+      ..worldBounds = worldSize.toRect()
+      ..zoom = 0.1;
     final enemy = await loadSprite('enemy.png');
-    await add(BackgroundComponent(Vector2(bg.srcSize.x, bg.srcSize.y), bg));
+    await add(BackgroundComponent(worldSize, bg));
     await add(
       EnemyComponent(
         enemy,
