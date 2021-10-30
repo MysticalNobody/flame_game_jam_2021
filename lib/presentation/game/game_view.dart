@@ -68,7 +68,7 @@ class AppGame extends Forge2DGame
     await add(YoungsterComponent(
       game: this,
       title: SpritesTitles.ghost,
-      position: Vector2(400, -100),
+      position: Vector2(400, -300),
       size: Vector2(100, 100),
     ));
 
@@ -84,12 +84,12 @@ class AppGame extends Forge2DGame
         position: Vector2(500, -worldBottomY),
       ),
     );
-    await add(
-      FixtureComponent.createGhost(
-        game: this,
-        position: Vector2(300, -100),
-      ),
-    );
+    // await add(
+    //   FixtureComponent.createGhost(
+    //     game: this,
+    //     position: Vector2(300, -100),
+    //   ),
+    // );
     await addAll(createBoundaries(this));
     await onAssetsLoad();
     return super.onLoad();
