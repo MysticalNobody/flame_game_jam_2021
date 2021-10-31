@@ -27,6 +27,39 @@ class YoungsterComponent extends SpriteBodyComponent
       title: title,
     );
   }
+  final _candies = <SpritesTitles, int>{};
+  final _candiesBodies = <SpritesTitles, FlyingCandyComponent>{};
+  void addCandy(SpritesTitles title) {
+    final isExisted = _candies.containsKey(title);
+    _candies[title] = (_candies[title] ?? 0) + 1;
+    final positionX = body.position.x + FlyingCandyComponent.shapeSize;
+    final position = Vector2(positionX, body.position.y);
+    if (!isExisted) {
+      final candy = FlyingCandyComponent.create(
+        game: game,
+        velocity: Vector2.zero(),
+        position: position,
+        title: title,
+      )..inPlayerBag = true;
+      game.add(candy);
+      _candiesBodies[title] = candy;
+    }
+  }
+
+  void removeCandy(SpritesTitles title) {
+    final isExists = _candies.containsKey(title);
+    if (isExists) {
+      final count = _candies[title] ?? 0;
+      if (count > 1) {
+        _candies[title] = count - 1;
+      } else {
+        _candies.remove(title);
+        final candy = _candiesBodies[title];
+        if (candy != null) game.remove(candy);
+      }
+    }
+  }
+
   final String id;
   final Vector2 position;
   final SpritesTitles title;
@@ -62,11 +95,17 @@ class YoungsterComponent extends SpriteBodyComponent
     // body.applyForce(event.velocity * 100);
     // if ((dragDiff?.length ?? 0) > 20) {
     if (dragEnabled) {
+      SpritesTitles? title;
+      if (_candies.isNotEmpty) {
+        title = _candies.keys.first;
+        removeCandy(title);
+      }
       game.add(
-        FlyingCandyComponent(
+        FlyingCandyComponent.create(
           game: game,
+          velocity: -dragDiff!,
           position: body.position + Vector2(100, 100),
-          velocity: -dragDiff!, //Vector2(dragDiff!.x, -dragDiff!.y),
+          title: title,
         ),
       );
       // }
@@ -133,18 +172,51 @@ class YoungsterComponent extends SpriteBodyComponent
   List<Object?> get props => [id];
 }
 
-class FlyingCandyComponent extends BodyComponent with HasPaint {
+class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
   FlyingCandyComponent({
     required this.game,
     required this.position,
     required this.velocity,
-  }) : super();
+    required this.title,
+    required Vector2 size,
+  })  : id = uuid.v4(),
+        super(
+          game.getSprite(title),
+          size,
+        );
+  factory FlyingCandyComponent.create({
+    required AppGame game,
+    required Vector2 velocity,
+    required Vector2 position,
+    SpritesTitles? title,
+  }) {
+    final titles = [
+      SpritesTitles.candy1,
+      SpritesTitles.candy2,
+      SpritesTitles.candy3,
+      SpritesTitles.candy4,
+      SpritesTitles.candy5,
+      SpritesTitles.candy6,
+    ];
+    final effectiveTitle = title ?? titles[math.Random().nextInt(5)];
+    return FlyingCandyComponent(
+      game: game,
+      title: effectiveTitle,
+      size: Vector2(shapeSize, shapeSize),
+      position: position,
+      velocity: velocity,
+    );
+  }
+  final SpritesTitles title;
   final AppGame game;
+  bool inPlayerBag = false;
+  final Id id;
   Vector2 position = Vector2.zero();
   Vector2 velocity = Vector2.zero();
+  static const shapeSize = 20.0;
   @override
   Body createBody() {
-    final CircleShape shape = CircleShape()..radius = 10;
+    final CircleShape shape = CircleShape()..radius = shapeSize;
 
     final fixtureDef = FixtureDef(shape)
       ..userData = this // To be able to determine object in collision
@@ -162,6 +234,8 @@ class FlyingCandyComponent extends BodyComponent with HasPaint {
   @override
   void update(double dt) {
     super.update(dt);
+    if (velocity.isZero()) return;
+
     velocity = velocity + game.world.gravity * dt * 5;
     body.setTransform(body.position + velocity * dt * 5, 0);
   }

@@ -21,6 +21,7 @@ class PlayerContactCallback
   void begin(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {
     log(b.body.toString());
     onContact(b);
+    b.addCandy(a.title);
     game.remove(a);
   }
 
