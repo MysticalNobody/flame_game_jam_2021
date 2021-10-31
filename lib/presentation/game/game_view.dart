@@ -33,10 +33,19 @@ class AppGameView extends StatefulWidget {
 final audios = List.generate(5, (index) => 'bg_${index + 1}.mp3');
 
 class _AppGameViewState extends State<AppGameView> {
+  int num = 0;
   @override
   void initState() {
     FlameAudio.audioCache.fixedPlayer = AudioPlayer();
-    play(0);
+    FlameAudio.audioCache.fixedPlayer!.stop();
+    FlameAudio.audioCache.fixedPlayer!.onPlayerCompletion.listen((_) {
+      if (num + 1 < audios.length) {
+        play(num + 1);
+      } else {
+        play(0);
+      }
+    });
+    play(num);
     super.initState();
   }
 
