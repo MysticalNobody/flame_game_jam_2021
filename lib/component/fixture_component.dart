@@ -12,6 +12,21 @@ enum ObstacleType {
   lose,
 }
 
+class PlayerContactCallback
+    extends ContactCallback<FlyingCandyComponent, YoungsterComponent> {
+  PlayerContactCallback({required this.game, required this.onContact});
+  final widgets.ValueChanged<YoungsterComponent> onContact;
+  final AppGame game;
+  @override
+  void begin(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {
+    log(b.body.toString());
+    onContact(b);
+  }
+
+  @override
+  void end(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {}
+}
+
 class WinContactCallback
     extends ContactCallback<FlyingCandyComponent, WinObstacleComponent> {
   WinContactCallback({required this.game, required this.onWin});

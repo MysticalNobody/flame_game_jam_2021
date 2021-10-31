@@ -62,7 +62,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
-  late YoungsterComponent com;
+  late YoungsterComponent player;
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
@@ -97,6 +97,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     );
   }
 
+  double get bottomLine => -worldBounds.bottom + 100;
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
@@ -129,16 +130,29 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     //   alignment: Alignment.bottomCenter,
     // ),
 
+    final players = [300, 800, 1400, 2000].map(
+      (e) => YoungsterComponent.create(
+        game: this,
+        position: Vector2(e.toDouble(), bottomLine),
+      ),
+    );
+
+    await addAll(players.toList());
+    player = players.first;
+
+    addContactCallback(
+      PlayerContactCallback(
+        game: this,
+        onContact: (newPlayer) {
+          player = newPlayer;
+        },
+      ),
+    );
     addContactCallback(WinContactCallback(game: this, onWin: () {}));
     addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
-    com = YoungsterComponent.create(
-      game: this,
-      position: Vector2(300, -700),
-    );
-    await add(com);
-    final ghostsPositions = List.generate(50, (index) => 100 + 30 * index);
+    final ghostsPositions = List.generate(50, (index) => 400 + 30 * index);
     final rand = math.Random();
 
     final ghosts = List.generate(10, (i) => i)
@@ -166,12 +180,12 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     //   ),
     // );
 
-    // await add(
-    //   WinObstacleComponent.create(
-    //     game: this,
-    //     position: Vector2(500, -worldBottomY),
-    //   ),
-    // );
+    await add(
+      WinObstacleComponent.create(
+        game: this,
+        position: Vector2(1500, bottomLine),
+      ),
+    );
     // await add(
     //   CandyBagComponent.create(
     //     game: this,
@@ -191,11 +205,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
-    final shouldDragStart = !com.containsPoint(info.eventPosition.game);
-    if (shouldDragStart) {
-      dragStart = info.eventPosition.game;
-      isDragging = true;
-    }
+    // final shouldDragStart = !player.containsPoint(info.eventPosition.game);
+    // if (shouldDragStart) {
+    dragStart = info.eventPosition.game;
+    isDragging = true;
+    // }
     super.onDragStart(pointerId, info);
   }
 
@@ -207,10 +221,12 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       final camPos = camera.position;
       final finalCamPos =
           Vector2(camPos.x - lastDiff!.x, camPos.y - lastDiff!.y);
-      camera.snapTo(Vector2(
-        camPos.x - lastDiff!.x * moveCoeff,
-        camPos.y + lastDiff!.y * moveCoeff,
-      ));
+      camera.snapTo(
+        Vector2(
+          camPos.x - lastDiff!.x * moveCoeff,
+          camPos.y + lastDiff!.y * moveCoeff,
+        ),
+      );
       dragStart = dragStart! + lastDiff!;
       log('cam: $camPos');
       log('final ${finalCamPos.toString()}');

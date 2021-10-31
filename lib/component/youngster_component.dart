@@ -95,7 +95,7 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
 
     final bodyDef = BodyDef()
       ..position = position
-      ..type = BodyType.dynamic;
+      ..type = BodyType.static;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
       ..setMassData(MassData());
