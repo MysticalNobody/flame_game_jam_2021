@@ -100,6 +100,7 @@ class YoungsterComponent extends SpriteBodyComponent
       ..friction = 0.2;
 
     final bodyDef = BodyDef()
+      ..userData = this
       ..position = position
       ..type = BodyType.static;
     return world.createBody(bodyDef)
