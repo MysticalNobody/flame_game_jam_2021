@@ -23,14 +23,12 @@ class GhostData {
 }
 
 final ghosts = <GhostData>[
-  GhostData('ghost1'),
-  GhostData('ghost2')..verMove = false,
-  GhostData('ghost3')
-    ..verMove = false
-    ..horMove = false,
+  GhostData('ghost1')..verMove = false,
+  GhostData('ghost2'),
+  GhostData('ghost3')..horMove = false..verMove = false,
   GhostData('ghost4')..verMove = false,
   GhostData('ghost5')..verMove = false,
-  GhostData('temp1', true, 12)..horMove = false,
+  GhostData('temp1', true, 12)..horMove = false..verMove = false,
   GhostData('temp2', true, 16),
   GhostData('temp3', true, 16),
   GhostData('temp4', true, 16),
