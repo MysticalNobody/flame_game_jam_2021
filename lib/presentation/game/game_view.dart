@@ -74,7 +74,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
 
   late YoungsterComponent player;
-
+  late YoungsterComponent firstPlayer;
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
@@ -149,13 +149,13 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       );
       await addAll([home, road]);
     }
-    final players = [
-      YoungsterComponent.create(
-        game: this,
-        initialCandiesCount: initalCandyCount,
-        position: Vector2(300, bottomLine),
-      ),
-    ];
+    firstPlayer = YoungsterComponent.create(
+      game: this,
+      initialCandiesCount: initalCandyCount,
+      position: Vector2(300, bottomLine),
+    );
+    player = firstPlayer;
+    final players = [firstPlayer];
     for (int i = 900; i < levelLength - 800; i += 600 + r.nextInt(500)) {
       players.add(
         YoungsterComponent.create(
@@ -166,7 +166,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     }
 
     await addAll(players);
-    player = players.first;
 
     addContactCallback(
       PlayerContactCallback(

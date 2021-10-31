@@ -301,7 +301,6 @@ class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
 
   final SpritesTitles title;
   final AppGame game;
-  bool inPlayerBag = false;
   final Id id;
   Vector2 position = Vector2.zero();
   Vector2 velocity = Vector2.zero();

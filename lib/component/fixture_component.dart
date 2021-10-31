@@ -59,6 +59,7 @@ class KillingContactCallback
   ) {
     log(b.body.toString());
 
+    game.firstPlayer.candyKeeper.addCandy(a.title);
     game.remove(a);
     onKill();
   }

@@ -18,7 +18,8 @@ class GroundContactCallback
   @override
   void begin(FlyingCandyComponent a, Wall b, Contact contact) {
     log(b.body.toString());
-    if (!a.inPlayerBag) game.remove(a);
+    game.firstPlayer.candyKeeper.addCandy(a.title);
+    game.remove(a);
   }
 
   @override
