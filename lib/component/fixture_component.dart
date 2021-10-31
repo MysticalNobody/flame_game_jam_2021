@@ -21,7 +21,7 @@ class PlayerContactCallback
   void begin(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {
     log(b.body.toString());
     // onContact(b);
-    b.addCandy(a.title);
+    b.candyKeeper.addCandy(a.title);
     game.remove(a);
   }
 
@@ -37,6 +37,8 @@ class WinContactCallback
   @override
   void begin(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {
     log(b.body.toString());
+    b.candyKeeper.addCandy(a.title);
+    game.remove(a);
     onWin();
   }
 
@@ -57,6 +59,7 @@ class KillingContactCallback
   ) {
     log(b.body.toString());
 
+    game.firstPlayer.candyKeeper.addCandy(a.title);
     game.remove(a);
     onKill();
   }
@@ -88,64 +91,6 @@ class BounceContactCallback
 }
 
 /// Like a door or another player
-class CandyBagComponent extends SpriteBodyComponent {
-  CandyBagComponent({
-    required this.title,
-    required this.game,
-    required this.position,
-    required Vector2 size,
-    this.type = BodyType.dynamic,
-  })  : sprite = game.getSprite(title),
-        super(
-          game.getSprite(title),
-          size,
-        );
-
-  factory CandyBagComponent.create({
-    required AppGame game,
-    required Vector2 position,
-  }) =>
-      CandyBagComponent(
-        game: game,
-        title: SpritesTitles.candyBag,
-        position: position,
-        // type: BodyType.dynamic,
-        size: Vector2(100, 100),
-      );
-
-  final Vector2 position;
-  final SpritesTitles title;
-  final AppGame game;
-  final Sprite sprite;
-  final BodyType type;
-
-  @override
-  Body createBody() {
-    final PolygonShape shape = PolygonShape();
-
-    final vertices = [
-      Vector2(-size.x / 2, -size.y / 2),
-      Vector2(size.x / 2, -size.y / 2),
-      Vector2(0, size.y / 2),
-    ];
-    shape.set(vertices);
-
-    final fixtureDef = FixtureDef(shape)
-      ..userData = this // To be able to determine object in collision
-      ..restitution = 0.3
-      ..density = 1.0
-      ..friction = 0.2;
-
-    final bodyDef = BodyDef()
-      ..userData = this
-      ..position = position
-      ..angle = (position.x + position.y) / 2 * 3.14
-      ..type = type;
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
-  }
-}
-
-/// Like a door or another player
 class WinObstacleComponent extends BaseObstacleComponent {
   WinObstacleComponent({
     required AppGame game,
@@ -168,8 +113,11 @@ class WinObstacleComponent extends BaseObstacleComponent {
         game: game,
         title: SpritesTitles.candyBag,
         position: position,
+        type: BodyType.static,
         size: Vector2(100, 100),
       );
+
+  late final candyKeeper = CandyKeeper(position: position, game: game);
 }
 
 /// Like a wall
@@ -289,11 +237,18 @@ class BaseObstacleComponent extends AnimatedSpriteBodyComponent {
   final BodyType type;
 
   async.Timer? timer;
+
+  @override
+  Future<void> onLoad() {
+    moveAlongPoints();
+    return super.onLoad();
+  }
+
   void moveAlongPoints() {
     timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
       final rand = math.Random();
       final sign = [-1, -1, 0, 1, 1][rand.nextInt(5)];
-      final dir = [1, 0, 0, 0, 1][rand.nextInt(5)];
+      final dir = [-1, 0, 0, 0, 1][rand.nextInt(5)];
       body.applyLinearImpulse(Vector2(dir * sign * 2000, dir * sign * 2000));
     });
   }

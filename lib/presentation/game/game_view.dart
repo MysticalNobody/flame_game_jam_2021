@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -51,8 +50,15 @@ class _AppGameViewState extends State<AppGameView> {
   }
 
   Future<void> play(int num) async {
-    await FlameAudio.playLongAudio(audios[num]);
-    log(FlameAudio.audioCache.fixedPlayer!.state.toString());
+    if (!kDebugMode) {
+      await FlameAudio.playLongAudio(audios[num]);
+      await FlameAudio.audioCache.fixedPlayer?.onPlayerCompletion.single;
+      if (num + 1 < audios.length) {
+        await play(num + 1);
+      } else {
+        await play(0);
+      }
+    }
   }
 
   @override
@@ -75,7 +81,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
+
   late YoungsterComponent player;
+  late YoungsterComponent firstPlayer;
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
@@ -92,6 +100,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   double get bottomLine => -worldBounds.bottom + 140;
   Rect get worldBounds => camera.worldBounds!;
+  final initalCandyCount = 15;
 
   @override
   Future<void> onLoad() async {
@@ -109,8 +118,10 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           ..prepare(this))
         .parallax!
         .size;
+    const backsCount = 4;
+    final levelLength = backSize.x * backsCount;
 
-    camera.worldBounds = Rect.fromLTRB(0, 0, backSize.x * 4, backSize.y * 1.2);
+    camera.worldBounds = Rect.fromLTRB(0, 0, levelLength, backSize.y * 1.2);
     await addAll(createBoundaries(this));
     await add(
       parallaxCom = await loadParallaxComponent(
@@ -128,7 +139,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       getSprite(SpritesTitles.bgHome2),
     ];
     final r = math.Random();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < backsCount; i++) {
       final backLeftTop = Vector2(
         worldBounds.left + i * backSize.x,
         worldBounds.bottom - backSize.y,
@@ -147,19 +158,23 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       );
       await addAll([home, road]);
     }
-    final firstPlayer = YoungsterComponent.create(
+    firstPlayer = YoungsterComponent.create(
       game: this,
+      initialCandiesCount: initalCandyCount,
       position: Vector2(300, bottomLine),
     );
-    final players = [800, 1400, 2000].map(
-      (e) => YoungsterComponent.create(
-        game: this,
-        position: Vector2(e.toDouble(), bottomLine),
-      ),
-    );
-
-    await addAll([firstPlayer, ...players]);
     player = firstPlayer;
+    final players = [firstPlayer];
+    for (int i = 900; i < levelLength - 800; i += 600 + r.nextInt(500)) {
+      players.add(
+        YoungsterComponent.create(
+          game: this,
+          position: Vector2(i.toDouble(), bottomLine),
+        ),
+      );
+    }
+
+    await addAll(players);
 
     addContactCallback(
       PlayerContactCallback(
@@ -175,29 +190,23 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
     addContactCallback(GroundContactCallback(game: this));
 
-    final ghostsPositions = List.generate(50, (index) => 400 + 60 * index);
-    final rand = math.Random();
-
-    final ghosts = List.generate(10, (i) => i)
-        .map(
-          (_) => KillingObstacleComponent.create(
-            game: this,
-            position: Vector2(
-              ghostsPositions[rand.nextInt(ghostsPositions.length)].toDouble(),
-              -145,
-            ),
+    final ghosts = <KillingObstacleComponent>[];
+    for (int i = 700; i < levelLength - 700; i += 300 + r.nextInt(200)) {
+      ghosts.add(
+        KillingObstacleComponent.create(
+          game: this,
+          position: Vector2(
+            i.toDouble(),
+            -145,
           ),
-        )
-        .toList();
-    // gameCamera.followComponent(com.positionComponent);
-    await addAll(ghosts);
-    for (var ghost in ghosts) {
-      ghost.moveAlongPoints();
+        ),
+      );
     }
+    await addAll(ghosts);
     await add(
       WinObstacleComponent.create(
         game: this,
-        position: Vector2(1500, bottomLine),
+        position: Vector2(levelLength - 300, bottomLine),
       ),
     );
     await onAssetsLoad();
