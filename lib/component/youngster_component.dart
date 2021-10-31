@@ -2,6 +2,52 @@ part of components;
 
 typedef CandiesCountList = List<SpritesTitles>;
 
+class CandyKeeper {
+  CandyKeeper({
+    required this.game,
+    required this.position,
+  });
+  final CandiesCountList candies = [];
+  final candiesBodies = <IdleCandyComponent>[];
+  final AppGame game;
+  final Vector2 position;
+  void addCandy(SpritesTitles title) {
+    candies.add(title);
+    const countInColumn = 10;
+    final columnsCount = candies.length ~/ countInColumn;
+    final totalCount = columnsCount * countInColumn;
+    int countInCurrentColumn = totalCount - candies.length;
+    if (countInCurrentColumn < 0) {
+      countInCurrentColumn *= -1;
+      countInCurrentColumn--;
+    }
+
+    final effectivePosition = Vector2(
+      position.x + 90 + 30 * columnsCount,
+      -game.bottomLine -
+          (FlyingCandyComponent.shapeSize * countInCurrentColumn) +
+          60,
+    );
+    final candy = IdleCandyComponent.create(
+      game: game,
+      position: effectivePosition,
+      title: title,
+    );
+    game.add(candy);
+    candiesBodies.add(candy);
+  }
+
+  void removeCandy(SpritesTitles title) {
+    if (candies.isEmpty) return;
+    final candy = candiesBodies.last;
+    if (candy.isMounted) {
+      game.remove(candy);
+    }
+    candiesBodies.removeLast();
+    candies.removeLast();
+  }
+}
+
 class YoungsterAnimationComponent extends SpriteAnimationComponent {
   YoungsterAnimationComponent(
     SpriteAnimation animation,
@@ -15,11 +61,13 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     required this.game,
     required this.size,
     required this.initialPosition,
+    required this.initialCandiesCount,
   }) : id = uuid.v4();
 
   factory YoungsterComponent.create({
     required AppGame game,
     required Vector2 position,
+    int? initialCandiesCount,
   }) {
     final title = [
       SpritesTitles.youngBoy,
@@ -32,56 +80,17 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
       size: Vector2(130, 220),
       initialPosition: position,
       title: title,
+      initialCandiesCount: initialCandiesCount,
     );
   }
-  @override
-  final debugMode = false;
-
+  late final candyKeeper = CandyKeeper(position: initialPosition, game: game);
   final Vector2 initialPosition;
   final Vector2 size;
-
-  final CandiesCountList _candies = <SpritesTitles>[];
-  final _candiesBodies = <IdleCandyComponent>[];
-
-  void addCandy(SpritesTitles title) {
-    _candies.add(title);
-    const countInColumn = 10;
-    final columnsCount = _candies.length ~/ countInColumn;
-    final totalCount = columnsCount * countInColumn;
-    int countInCurrentColumn = totalCount - _candies.length;
-    if (countInCurrentColumn < 0) {
-      countInCurrentColumn *= -1;
-      countInCurrentColumn--;
-    }
-
-    final position = Vector2(
-      body.position.x + 90 + 30 * columnsCount,
-      -game.bottomLine -
-          (FlyingCandyComponent.shapeSize * countInCurrentColumn) +
-          60,
-    );
-    final candy = IdleCandyComponent.create(
-      game: game,
-      position: position,
-      title: title,
-    );
-    game.add(candy);
-    _candiesBodies.add(candy);
-  }
-
-  void removeCandy(SpritesTitles title) {
-    if (_candies.isEmpty) return;
-    final candy = _candiesBodies.last;
-    if (candy.isMounted) {
-      game.remove(candy);
-    }
-    _candiesBodies.removeLast();
-    _candies.removeLast();
-  }
 
   final String id;
   final SpritesTitles title;
   final AppGame game;
+  final int? initialCandiesCount;
 
   ThrowingTrajectoryComponent? throwingTrajectory;
   bool dragging = false;
@@ -114,21 +123,26 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     // if ((dragDiff?.length ?? 0) > 20) {
     if (dragEnabled) {
       SpritesTitles? title;
-      if (_candies.isNotEmpty) {
-        title = _candies.last;
-        removeCandy(title);
+      bool addCandy = false;
+      if (candyKeeper.candies.isNotEmpty) {
+        title = candyKeeper.candies.last;
+        candyKeeper.removeCandy(title);
+        addCandy = true;
       }
-      game.add(
-        FlyingCandyComponent.create(
-          game: game,
-          velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
-          position: body.position + Vector2(50, 10),
-          title: title,
-        ),
-      );
-      // }
+      if (debugMode) addCandy = true;
+      if (addCandy) {
+        game.add(
+          FlyingCandyComponent.create(
+            game: game,
+            velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
+            position: body.position + Vector2(50, 10),
+            title: title,
+          ),
+        );
+        // }
+        log('velocity ${event.velocity} dragDiff $dragDiff ');
+      }
       dragging = false;
-      log('velocity ${event.velocity} dragDiff $dragDiff ');
     }
     return super.onDragEnd(pointerId, event);
   }
@@ -142,6 +156,10 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   @override
   Body createBody() {
     final PolygonShape shape = PolygonShape();
+    for (var i = 0; i < (initialCandiesCount ?? 0); i++) {
+      final candyTitle = FlyingCandyComponent.getRandomCandy();
+      candyKeeper.addCandy(candyTitle);
+    }
 
     final vertices = [
       Vector2(-size.x / 2, -size.y / 2),
@@ -253,21 +271,14 @@ class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
           game.getSprite(title),
           size,
         );
+
   factory FlyingCandyComponent.create({
     required AppGame game,
     required Vector2 velocity,
     required Vector2 position,
     SpritesTitles? title,
   }) {
-    final titles = [
-      SpritesTitles.candy1,
-      SpritesTitles.candy2,
-      SpritesTitles.candy3,
-      SpritesTitles.candy4,
-      SpritesTitles.candy5,
-      SpritesTitles.candy6,
-    ];
-    final effectiveTitle = title ?? titles[math.Random().nextInt(5)];
+    final effectiveTitle = title ?? getRandomCandy();
     return FlyingCandyComponent(
       game: game,
       title: effectiveTitle,
@@ -276,9 +287,20 @@ class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
       velocity: velocity,
     );
   }
+  static SpritesTitles getRandomCandy() {
+    final titles = [
+      SpritesTitles.candy1,
+      SpritesTitles.candy2,
+      SpritesTitles.candy3,
+      SpritesTitles.candy4,
+      SpritesTitles.candy5,
+      SpritesTitles.candy6,
+    ];
+    return titles[math.Random().nextInt(5)];
+  }
+
   final SpritesTitles title;
   final AppGame game;
-  bool inPlayerBag = false;
   final Id id;
   Vector2 position = Vector2.zero();
   Vector2 velocity = Vector2.zero();
