@@ -2,11 +2,6 @@ part of core;
 
 enum SpritesTitles {
   candyBag,
-  ghost1,
-  ghost2,
-  ghost3,
-  ghost4,
-  ghost5,
   candy1,
   candy2,
   candy3,
