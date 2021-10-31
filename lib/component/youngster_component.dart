@@ -23,7 +23,7 @@ class YoungsterComponent extends SpriteBodyComponent
     return YoungsterComponent(
       game: game,
       position: position,
-      size: Vector2(100, 100),
+      size: Vector2(150, 220),
       title: title,
     );
   }
@@ -65,8 +65,8 @@ class YoungsterComponent extends SpriteBodyComponent
       game.add(
         FlyingCandyComponent(
           game: game,
-          position: body.position + Vector2(100, 100),
-          velocity: -dragDiff!, //Vector2(dragDiff!.x, -dragDiff!.y),
+          position: body.position + Vector2(0, 130),
+          velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
         ),
       );
       // }
@@ -122,8 +122,8 @@ class YoungsterComponent extends SpriteBodyComponent
   void update(double dt) {
     super.update(dt);
     if (throwingTrajectory != null && dragging) {
-      throwingTrajectory!
-          .showDrag(Vector2(100 + body.position.x, body.position.y), dragDiff!);
+      throwingTrajectory!.showDrag(
+          Vector2(body.position.x, 130 + body.position.y), dragDiff! * 3);
     } else {
       throwingTrajectory!.hideDrag();
     }
@@ -162,8 +162,8 @@ class FlyingCandyComponent extends BodyComponent with HasPaint {
   @override
   void update(double dt) {
     super.update(dt);
-    velocity = velocity + game.world.gravity * dt * 5;
-    body.setTransform(body.position + velocity * dt * 5, 0);
+    velocity = velocity + game.world.gravity * dt * 3;
+    body.setTransform(body.position + velocity * dt * 1.75, 0);
   }
 }
 
@@ -187,7 +187,8 @@ class ThrowingTrajectoryComponent extends PositionComponent with HasPaint {
       double x =
           -position.x - velocity.x * time - game.world.gravity.x * time * time;
       double y = -position.y +
-          (velocity.y * time - game.world.gravity.y * time * time);
+          (velocity.y * time - game.world.gravity.y * time * time) -
+          130;
       canvas.drawCircle(Offset(x, y), 5, paint);
     }
   }
