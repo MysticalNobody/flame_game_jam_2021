@@ -39,20 +39,25 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   bool onDragEnd(int pointerId, DragEndInfo event) {
     // body.applyForce(event.velocity * 100);
     // if ((dragDiff?.length ?? 0) > 20) {
+    final defaultVelocity = Vector2(300, 300);
+    final effectiveVelocity = defaultVelocity
+      ..multiply(
+        (-dragDiff!
+          ..divide(defaultVelocity)),
+      );
     game.add(
       FlyingCandyComponent(
         game: game,
         position: body.position + Vector2(100, 100),
-        velocity: Vector2(300, 300)
-          ..multiply(
-            (-dragDiff!
-              ..divide(Vector2(300, 300))),
-          ), //Vector2(dragDiff!.x, -dragDiff!.y),
+        velocity: effectiveVelocity, //Vector2(dragDiff!.x, -dragDiff!.y),
       ),
     );
     // }
     dragging = false;
-    log('velocity ${event.velocity} dragDiff $dragDiff');
+    log(
+      'velocity ${event.velocity} dragDiff $dragDiff '
+      'effectiveVelocity $effectiveVelocity',
+    );
     return super.onDragEnd(pointerId, event);
   }
 
