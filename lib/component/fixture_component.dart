@@ -13,27 +13,31 @@ enum ObstacleType {
 }
 
 class WinContactCallback
-    extends ContactCallback<CandyBagComponent, WinObstacleComponent> {
+    extends ContactCallback<FlyingCandyComponent, WinObstacleComponent> {
   WinContactCallback({required this.game, required this.onWin});
   final widgets.VoidCallback onWin;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, WinObstacleComponent b, Contact contact) {
+  void begin(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {
     log(b.body.toString());
     onWin();
   }
 
   @override
-  void end(CandyBagComponent a, WinObstacleComponent b, Contact contact) {}
+  void end(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {}
 }
 
 class KillingContactCallback
-    extends ContactCallback<CandyBagComponent, KillingObstacleComponent> {
+    extends ContactCallback<FlyingCandyComponent, KillingObstacleComponent> {
   KillingContactCallback({required this.game, required this.onKill});
   final widgets.VoidCallback onKill;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, KillingObstacleComponent b, Contact contact) {
+  void begin(
+    FlyingCandyComponent a,
+    KillingObstacleComponent b,
+    Contact contact,
+  ) {
     log(b.body.toString());
 
     game.remove(a);
@@ -41,21 +45,29 @@ class KillingContactCallback
   }
 
   @override
-  void end(CandyBagComponent a, KillingObstacleComponent b, Contact contact) {}
+  void end(
+    FlyingCandyComponent a,
+    KillingObstacleComponent b,
+    Contact contact,
+  ) {}
 }
 
 class BounceContactCallback
-    extends ContactCallback<CandyBagComponent, BounceContactCallback> {
+    extends ContactCallback<FlyingCandyComponent, BounceContactCallback> {
   BounceContactCallback({required this.game, required this.onBounce});
   final widgets.VoidCallback onBounce;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, BounceContactCallback b, Contact contact) {
+  void begin(FlyingCandyComponent a, BounceContactCallback b, Contact contact) {
     log(b.toString());
   }
 
   @override
-  void end(CandyBagComponent a, BounceContactCallback b, Contact contact) {}
+  void end(
+    FlyingCandyComponent a,
+    BounceContactCallback b,
+    Contact contact,
+  ) {}
 }
 
 /// Like a door or another player
