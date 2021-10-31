@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:example/gen/assets.gen.dart';
 import 'package:example/presentation/game/game_view.dart';
 import 'package:example/presentation/home/home_view_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,18 +14,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  late AppGame gameWidget;
-
-  @override
-  void initState() {
-    super.initState();
-    gameWidget = AppGame(
-      onAssetsLoad: () async {
-        log('message');
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
@@ -126,7 +113,7 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           Expanded(
                             child: Column(
-                              children: [
+                              children: const [
                                 Text(
                                   'How to play',
                                   style: TextStyle(fontSize: 24),
@@ -155,7 +142,7 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           );
-        } else if (model.page == Pages.finish) {
+        } else if (model.page == Pages.gameOver) {
           return Material(
             color: Colors.black,
             child: GestureDetector(
@@ -173,51 +160,85 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                   Center(
-                      child: Opacity(
-                    opacity: .8,
-                    child: Container(
-                      padding: EdgeInsets.all(24),
-                      width: MediaQuery.of(context).size.width - 64,
-                      height: MediaQuery.of(context).size.height - 64,
-                      decoration: BoxDecoration(
-                          color: Color(0xffeb9062),
-                          borderRadius: BorderRadius.circular(16)),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Congratulations',
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                                Divider(),
-                                Text(
-                                  'Congratulations, you\'ve completed our super super cool game! We tried very hard to make you like it!\nAuthors:',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w300),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                    child: Opacity(
+                      opacity: .8,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: Image.asset(
+                              'assets/images/game_over1.png',
+                              fit: BoxFit.cover,
+                              height: MediaQuery.of(context).size.height,
+                            ).image,
                           ),
-                          Text(
-                            'tap to go to menu',
-                            style: TextStyle(
-                                fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                        child: Center(
+                          child: Stack(
+                            children: [
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: Image.asset(
+                                      'assets/images/game_over3.png',
+                                      fit: BoxFit.cover,
+                                    ).image,
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  'assets/images/game_over5.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: Image.asset(
+                                      'assets/images/game_over2.png',
+                                      fit: BoxFit.cover,
+                                    ).image,
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  'assets/images/game_over2.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Positioned.fill(
+                                child: Align(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 20.0),
+                                    child: SizedBox(
+                                      width: 100,
+                                      child: Text(
+                                        'You won in ${model.seconds} seconds',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
           );
         } else {
           return AppGameView(
-            game: gameWidget,
+            game: AppGame(
+              onAssetsLoad: () async {
+                log('message');
+              },
+              onGameOver: model.showGameOver,
+            ),
           );
         }
       },
