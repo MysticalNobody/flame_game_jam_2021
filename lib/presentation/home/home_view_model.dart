@@ -1,6 +1,6 @@
 import 'package:stacked/stacked.dart';
 
-enum Pages { menu, hint, game }
+enum Pages { menu, hint, game, finish }
 
 class HomeViewModel extends BaseViewModel {
   Pages page = Pages.menu;
