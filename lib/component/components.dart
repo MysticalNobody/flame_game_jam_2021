@@ -4,6 +4,7 @@ import 'dart:async' as async;
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:equatable/equatable.dart';
 import 'package:example/core/core.dart';
 import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/components.dart';

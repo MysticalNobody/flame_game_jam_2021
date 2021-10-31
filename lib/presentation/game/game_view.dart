@@ -158,16 +158,19 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       );
       await addAll([home, road]);
     }
-
-    final players = [300, 800, 1400, 2000].map(
+    final firstPlayer = YoungsterComponent.create(
+      game: this,
+      position: Vector2(300, bottomLine),
+    );
+    final players = [800, 1400, 2000].map(
       (e) => YoungsterComponent.create(
         game: this,
         position: Vector2(e.toDouble(), bottomLine),
       ),
     );
 
-    await addAll(players.toList());
-    player = players.first;
+    await addAll([firstPlayer, ...players]);
+    player = firstPlayer;
 
     addContactCallback(
       PlayerContactCallback(
@@ -177,9 +180,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         },
       ),
     );
+
     addContactCallback(WinContactCallback(game: this, onWin: () {}));
     addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
+    addContactCallback(GroundContactCallback(game: this));
 
     final ghostsPositions = List.generate(50, (index) => 400 + 60 * index);
     final rand = math.Random();
@@ -213,8 +218,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
-    dragStart = info.eventPosition.game;
-    isDragging = true;
+    final shouldDragStart = !player.containsPoint(info.eventPosition.game);
+    if (shouldDragStart) {
+      dragStart = info.eventPosition.game;
+      isDragging = true;
+    }
     super.onDragStart(pointerId, info);
   }
 

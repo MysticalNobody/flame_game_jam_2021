@@ -1,12 +1,14 @@
 part of components;
 
-class YoungsterComponent extends SpriteBodyComponent with Draggable {
+class YoungsterComponent extends SpriteBodyComponent
+    with Draggable, EquatableMixin {
   YoungsterComponent({
     required this.title,
     required this.game,
     required this.position,
     required Vector2 size,
   })  : sprite = game.getSprite(title),
+        id = uuid.v4(),
         super(game.getSprite(title), size);
 
   factory YoungsterComponent.create({
@@ -25,7 +27,7 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
       title: title,
     );
   }
-
+  final String id;
   final Vector2 position;
   final SpritesTitles title;
   final AppGame game;
@@ -35,18 +37,21 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   bool dragging = false;
   Vector2? dragStart;
   Vector2? dragDiff;
-
+  bool get dragEnabled => game.player.id == id;
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
-    log(info.eventPosition.game.toString());
-    dragging = true;
-    dragStart = info.eventPosition.game;
+    if (dragEnabled) {
+      log(info.eventPosition.game.toString());
+      dragging = true;
+      dragStart = info.eventPosition.game;
+    }
+
     return super.onDragStart(pointerId, info);
   }
 
   @override
   bool onDragUpdate(int pointerId, DragUpdateInfo event) {
-    if (dragging == true) {
+    if (dragging && dragEnabled) {
       dragDiff = event.eventPosition.game - dragStart!;
     }
     return super.onDragUpdate(pointerId, event);
@@ -56,17 +61,18 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   bool onDragEnd(int pointerId, DragEndInfo event) {
     // body.applyForce(event.velocity * 100);
     // if ((dragDiff?.length ?? 0) > 20) {
-
-    game.add(
-      FlyingCandyComponent(
-        game: game,
-        position: body.position + Vector2(100, 100),
-        velocity: -dragDiff!, //Vector2(dragDiff!.x, -dragDiff!.y),
-      ),
-    );
-    // }
-    dragging = false;
-    log('velocity ${event.velocity} dragDiff $dragDiff ');
+    if (dragEnabled) {
+      game.add(
+        FlyingCandyComponent(
+          game: game,
+          position: body.position + Vector2(100, 100),
+          velocity: -dragDiff!, //Vector2(dragDiff!.x, -dragDiff!.y),
+        ),
+      );
+      // }
+      dragging = false;
+      log('velocity ${event.velocity} dragDiff $dragDiff ');
+    }
     return super.onDragEnd(pointerId, event);
   }
 
@@ -121,6 +127,9 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
       throwingTrajectory!.hideDrag();
     }
   }
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class FlyingCandyComponent extends BodyComponent with HasPaint {

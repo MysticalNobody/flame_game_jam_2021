@@ -1,12 +1,29 @@
+import 'dart:developer';
 import 'dart:ui';
 
+import 'package:example/component/components.dart';
 import 'package:example/presentation/game/game_view.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/contact_callbacks.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:forge2d/forge2d.dart';
+
+class GroundContactCallback
+    extends ContactCallback<FlyingCandyComponent, Wall> {
+  GroundContactCallback({required this.game});
+  final AppGame game;
+  @override
+  void begin(FlyingCandyComponent a, Wall b, Contact contact) {
+    log(b.body.toString());
+    game.remove(a);
+  }
+
+  @override
+  void end(FlyingCandyComponent a, Wall b, Contact contact) {}
+}
 
 List<Wall> createBoundaries(AppGame game) {
   final worldBounds = game.worldBounds;
