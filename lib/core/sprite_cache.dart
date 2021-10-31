@@ -9,7 +9,10 @@ enum SpritesTitles {
   ghost5,
   bg,
   bgHome,
+  bgHome1,
+  bgHome2,
   bgRoadStart,
+  bgRoadMiddle,
   youngBoy,
   youngGirl,
 }

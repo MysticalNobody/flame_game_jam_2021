@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:example/component/components.dart';
@@ -65,17 +65,18 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
+
+  late ParallaxComponent parallaxCom;
+
   @override
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
-    camera
-      ..worldBounds = const Rect.fromLTRB(0, 0, 20000, 1000)
-      ..zoom =
-          window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
+    camera.zoom =
+        window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
   }
 
-  late ParallaxComponent<AppGame> skyParallax;
-  late ParallaxComponent<AppGame> treesParallax;
+  // late ParallaxComponent<AppGame> skyParallax;
+  // late ParallaxComponent<AppGame> treesParallax;
   Future<ParallaxComponent<AppGame>> createParallaxComponent(
     String image,
   ) async {
@@ -99,21 +100,64 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
-    // debugMode = true;
+    debugMode = true;
     await spritesCache.onLoad();
     // world.setGravity(Vector2(200, -10));
-    await addAll(createBoundaries(this));
-    skyParallax = await createParallaxComponent('bg_sky.png');
-    treesParallax = await createParallaxComponent('bg_trees.png');
-    await addAll([skyParallax, treesParallax]);
+    // skyParallax = await createParallaxComponent('bg_sky.png');
+    // treesParallax = await createParallaxComponent('bg_trees.png');
+    // await addAll([skyParallax, treesParallax]);
 
-    final home =
-        BackgroundComponent.create(game: this, title: SpritesTitles.bgHome);
-    final road = BackgroundComponent.create(
-      game: this,
-      title: SpritesTitles.bgRoadStart,
+    final backSize = (await loadParallaxComponent(
+      [
+        ParallaxImageData('bg_road_start.png'), //1.44
+        ParallaxImageData('bg_home.png'), //1.728
+      ],
+      priority: -1,
+      repeat: ImageRepeat.noRepeat,
+      velocityMultiplierDelta: Vector2(1, 0),
+    )
+          ..prepare(this))
+        .parallax!
+        .size;
+
+    camera.worldBounds = Rect.fromLTRB(0, 0, backSize.x * 4, backSize.y * 1.2);
+    await addAll(createBoundaries(this));
+    await add(
+      parallaxCom = await loadParallaxComponent(
+        [
+          ParallaxImageData('bg_sky.png'),
+          ParallaxImageData('bg_trees.png'), //1.2
+        ],
+        priority: -1,
+        velocityMultiplierDelta: Vector2(1.2, 0),
+      ),
     );
-    await addAll([home, road]);
+    List<Sprite> homes = [
+      getSprite(SpritesTitles.bgHome),
+      getSprite(SpritesTitles.bgHome1),
+      getSprite(SpritesTitles.bgHome2),
+    ];
+    final r = Random();
+    for (int i = 0; i < 4; i++) {
+      final backLeftTop = Vector2(
+        worldBounds.left + i * backSize.x,
+        worldBounds.bottom - backSize.y,
+      );
+      final home = BackgroundComponent(
+        sprite: homes[r.nextInt(2)],
+        size: backSize,
+        position: backLeftTop,
+      );
+      final road = BackgroundComponent(
+        sprite: i == 0
+            ? getSprite(SpritesTitles.bgRoadStart)
+            : getSprite(SpritesTitles.bgRoadMiddle),
+        size: backSize,
+        position: backLeftTop,
+      );
+      await addAll([home, road]);
+    }
+
     //   [
     //     ParallaxImageData('bg_road_start.png'),
     //     ParallaxImageData('bg_home.png'),
@@ -187,6 +231,12 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    if (camera.position.x < 1) setZeroParallax();
+  }
+
+  @override
   void onDragUpdate(int pointerId, DragUpdateInfo details) {
     if (isDragging && dragStart != null) {
       lastDiff = details.eventPosition.game - dragStart!;
@@ -199,10 +249,8 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         camPos.y + lastDiff!.y * moveCoeff,
       ));
       dragStart = dragStart! + lastDiff!;
-      log('cam: $camPos');
-      log('final ${finalCamPos.toString()}');
-      skyParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 1);
-      treesParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 4);
+      if (camera.position.x > 1)
+        parallaxCom.parallax!.baseVelocity.setFrom(-lastDiff! * 10);
     } else if (isDragging) {
       setZeroParallax();
       lastDiff = details.eventPosition.game - dragStart!;
@@ -211,8 +259,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   }
 
   void setZeroParallax() {
-    skyParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
-    treesParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
+    parallaxCom.parallax!.baseVelocity.setFrom(Vector2.zero());
   }
 
   @override

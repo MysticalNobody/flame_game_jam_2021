@@ -17,12 +17,13 @@ class BackgroundComponent extends SpriteComponent {
   }) {
     final sprite = game.getSprite(title);
     final size = sprite.srcSize;
-    final diff = size.y / game.worldBounds.height;
-    final homeSize = Vector2(size.x / diff, game.worldBounds.height);
+    final homeSize = Vector2(size.x / size.y * game.worldBounds.height,
+            game.worldBounds.height) /
+        2;
     return BackgroundComponent(
       size: homeSize,
       sprite: sprite,
-      position: Vector2(0, -(game.worldBounds.height - homeSize.y)),
+      position: Vector2(0, game.worldBounds.height - homeSize.y),
     );
   }
 }
