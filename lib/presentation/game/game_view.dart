@@ -84,10 +84,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     ];
     final layers = images
         .map(
-          (image) => ParallaxLayer(
-            image,
-            velocityMultiplier: Vector2(1.8, 0),
-          )..resize(size),
+          (image) =>
+              ParallaxLayer(image, velocityMultiplier: Vector2(1.8, -1.8))
+                ..resize(size),
         )
         .toList();
 
@@ -107,22 +106,22 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     skyParallax = await createParallaxComponent('bg_sky.png');
     treesParallax = await createParallaxComponent('bg_trees.png');
     await addAll([skyParallax, treesParallax]);
-    // final home = BackgroundComponent(
-    //   size: Vector2(
-    //     getSprite(SpritesTitles.bgHome).srcSize.x,
-    //     worldBounds.height,
-    //   ),
-    //   sprite: getSprite(SpritesTitles.bgHome),
-    //   position: Vector2.zero(),
-    // );
-    final size = getSprite(SpritesTitles.bgHome).srcSize
-      ..clamp(Vector2(200, 200), worldBounds.toVector2());
-    final home = BackgroundComponent(
-      size: size,
+
+    final size = getSprite(SpritesTitles.bgHome).srcSize;
+    final diff = size.y / worldBounds.height;
+    final homeSize = Vector2(size.x / diff, worldBounds.height);
+    BackgroundComponent(
+      size: homeSize,
       sprite: getSprite(SpritesTitles.bgHome),
-      position: Vector2(0, -size.y),
+      position: Vector2(0, -(worldBounds.height - homeSize.y)),
     );
-    await addAll([home]);
+    final home =
+        BackgroundComponent.create(game: this, title: SpritesTitles.bgHome);
+    final road = BackgroundComponent.create(
+      game: this,
+      title: SpritesTitles.bgRoadStart,
+    );
+    await addAll([home, road]);
     //   [
     //     ParallaxImageData('bg_road_start.png'),
     //     ParallaxImageData('bg_home.png'),
