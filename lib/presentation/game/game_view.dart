@@ -171,7 +171,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         camPos.y + lastDiff!.y * moveCoeff,
       ));
       dragStart = dragStart! + lastDiff!;
-      log('cam: ${camPos}');
+      log('cam: $camPos');
       log('final ${finalCamPos.toString()}');
     } else if (isDragging) {
       lastDiff = event.eventPosition.game - dragStart!;
@@ -184,13 +184,5 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     isDragging = false;
     lastDiff = null;
     super.onDragEnd(pointerId, event);
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    if (!gameCamera.velocity.isZero()) {
-      gameCamera.position.add(gameCamera.velocity * dt * 10);
-    }
   }
 }

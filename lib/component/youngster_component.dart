@@ -38,17 +38,21 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   @override
   bool onDragEnd(int pointerId, DragEndInfo event) {
     // body.applyForce(event.velocity * 100);
-    if ((dragDiff?.length ?? 0) > 20) {
-      game.add(
-        FlyingCandyComponent(
-          game: game,
-          position: body.position + Vector2(100, 100),
-          velocity: -dragDiff! * 10000, //Vector2(dragDiff!.x, -dragDiff!.y),
-        ),
-      );
-    }
+    // if ((dragDiff?.length ?? 0) > 20) {
+    game.add(
+      FlyingCandyComponent(
+        game: game,
+        position: body.position + Vector2(100, 100),
+        velocity: Vector2(300, 300)
+          ..multiply(
+            (-dragDiff!
+              ..divide(Vector2(300, 300))),
+          ), //Vector2(dragDiff!.x, -dragDiff!.y),
+      ),
+    );
+    // }
     dragging = false;
-    log(event.velocity.toString());
+    log('velocity ${event.velocity} dragDiff $dragDiff');
     return super.onDragEnd(pointerId, event);
   }
 
@@ -126,11 +130,13 @@ class FlyingCandyComponent extends BodyComponent with HasPaint {
 
     final bodyDef = BodyDef()
       ..position = position
-      // ..linearVelocity = velocity
+      ..userData = this
+      ..linearVelocity = velocity
       ..type = BodyType.dynamic;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
-      ..setMassData(MassData()..mass = 100)
+      ..setMassData(MassData()..mass = 10)
+      ..inertia = 100
       ..applyForce(velocity);
   }
 }
