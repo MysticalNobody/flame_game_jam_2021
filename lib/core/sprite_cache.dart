@@ -8,7 +8,6 @@ enum SpritesTitles {
   candy4,
   candy5,
   candy6,
-  bg,
   bgHome,
   bgHome1,
   bgHome2,
