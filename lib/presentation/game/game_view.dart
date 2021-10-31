@@ -213,15 +213,20 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       skyParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 1);
       treesParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 4);
     } else if (isDragging) {
-      skyParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
-      treesParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
+      setZeroParallax();
       lastDiff = event.eventPosition.game - dragStart!;
     }
     super.onDragUpdate(pointerId, event);
   }
 
+  void setZeroParallax() {
+    skyParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
+    treesParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
+  }
+
   @override
   void onDragEnd(int pointerId, DragEndInfo event) {
+    setZeroParallax();
     isDragging = false;
     lastDiff = null;
     super.onDragEnd(pointerId, event);
