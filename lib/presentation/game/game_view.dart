@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -45,9 +44,9 @@ class _AppGameViewState extends State<AppGameView> {
     await FlameAudio.playLongAudio(audios[num]);
     await FlameAudio.audioCache.fixedPlayer?.onPlayerCompletion.single;
     if (num + 1 < audios.length) {
-      play(num + 1);
+      await play(num + 1);
     } else {
-      play(0);
+      await play(0);
     }
   }
 
@@ -71,7 +70,10 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
+
   late YoungsterComponent player;
+  late YoungsterComponent firstPlayer;
+
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
@@ -88,6 +90,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   double get bottomLine => -worldBounds.bottom + 140;
   Rect get worldBounds => camera.worldBounds!;
+  final initalCandyCount = 15;
 
   @override
   Future<void> onLoad() async {
@@ -143,10 +146,13 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       );
       await addAll([home, road]);
     }
-    final firstPlayer = YoungsterComponent.create(
+
+    firstPlayer = YoungsterComponent.create(
       game: this,
+      initialCandiesCount: initalCandyCount,
       position: Vector2(300, bottomLine),
     );
+
     final players = [800, 1400, 2000].map(
       (e) => YoungsterComponent.create(
         game: this,
