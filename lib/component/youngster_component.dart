@@ -1,5 +1,7 @@
 part of components;
 
+typedef CandiesCountMap = Map<SpritesTitles, int>;
+
 class YoungsterComponent extends SpriteBodyComponent
     with Draggable, EquatableMixin {
   YoungsterComponent({
@@ -27,7 +29,7 @@ class YoungsterComponent extends SpriteBodyComponent
       title: title,
     );
   }
-  final _candies = <SpritesTitles, int>{};
+  final CandiesCountMap _candies = <SpritesTitles, int>{};
   final _candiesBodies = <SpritesTitles, IdleCandyComponent>{};
   void addCandy(SpritesTitles title) {
     final isExisted = _candies.containsKey(title);
@@ -38,6 +40,7 @@ class YoungsterComponent extends SpriteBodyComponent
     if (!isExisted) {
       final candy = IdleCandyComponent.create(
         game: game,
+        candiesCountMap: _candies,
         position: position,
         title: title,
       );
@@ -75,6 +78,7 @@ class YoungsterComponent extends SpriteBodyComponent
   Vector2? dragStart;
   Vector2? dragDiff;
   bool get dragEnabled => game.player.id == id;
+
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
     if (dragEnabled) {
@@ -184,6 +188,7 @@ class IdleCandyComponent extends SpriteComponent {
     required Vector2 position,
     required this.title,
     required Vector2 size,
+    required this.candiesCountMap,
   })  : id = uuid.v4(),
         super(
           size: size,
@@ -195,6 +200,7 @@ class IdleCandyComponent extends SpriteComponent {
     required AppGame game,
     required Vector2 position,
     required SpritesTitles title,
+    required CandiesCountMap candiesCountMap,
   }) =>
       IdleCandyComponent(
         game: game,
@@ -203,9 +209,25 @@ class IdleCandyComponent extends SpriteComponent {
           FlyingCandyComponent.shapeSize,
           FlyingCandyComponent.shapeSize,
         ),
+        candiesCountMap: candiesCountMap,
         position: position,
       );
+  final CandiesCountMap candiesCountMap;
+  @override
+  void render(Canvas canvas) {
+    textConfig.render(
+      canvas,
+      '${candiesCountMap[title] ?? 0}',
+      position.clone()..add(Vector2(20, -size.y / 5)),
+    );
+    super.render(canvas);
+  }
 
+  static final TextPaint textConfig = TextPaint(
+    config: const TextPaintConfig(
+      color: Color(0xFFFFFFFF),
+    ),
+  );
   final SpritesTitles title;
   final AppGame game;
   final Id id;
