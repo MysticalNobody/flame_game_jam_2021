@@ -16,7 +16,9 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame_forge2d/position_body_component.dart';
 import 'package:flame_forge2d/sprite_body_component.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as widgets;
+import 'package:recase/recase.dart';
 
 part 'animated_sprite_component.dart';
 part 'background_component.dart';

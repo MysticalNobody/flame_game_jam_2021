@@ -101,7 +101,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
-    // debugMode = true;
     await spritesCache.onLoad();
     // world.setGravity(Vector2(200, -10));
     // skyParallax = await createParallaxComponent('bg_sky.png');
@@ -160,12 +159,12 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     }
     final firstPlayer = YoungsterComponent.create(
       game: this,
-      position: Vector2(300, bottomLine),
+      position: Vector2(300, bottomLine + 120),
     );
     final players = [800, 1400, 2000].map(
       (e) => YoungsterComponent.create(
         game: this,
-        position: Vector2(e.toDouble(), bottomLine),
+        position: Vector2(e.toDouble(), bottomLine + 120),
       ),
     );
 
@@ -214,6 +213,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     await onAssetsLoad();
     await super.onLoad();
     gameCamera.initCameraPosition();
+    debugMode = false;
   }
 
   @override

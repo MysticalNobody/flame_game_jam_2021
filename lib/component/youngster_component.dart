@@ -1,15 +1,19 @@
 part of components;
 
-class YoungsterComponent extends SpriteBodyComponent
-    with Draggable, EquatableMixin {
+class YoungsterAnimationComponent extends SpriteAnimationComponent {
+  YoungsterAnimationComponent(
+    SpriteAnimation animation,
+    Vector2 spriteSize,
+  ) : super(size: spriteSize, animation: animation, position: -spriteSize / 2);
+}
+
+class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   YoungsterComponent({
     required this.title,
     required this.game,
-    required this.position,
-    required Vector2 size,
-  })  : sprite = game.getSprite(title),
-        id = uuid.v4(),
-        super(game.getSprite(title), size);
+    required this.size,
+    required this.initialPosition,
+  }) : id = uuid.v4();
 
   factory YoungsterComponent.create({
     required AppGame game,
@@ -17,16 +21,23 @@ class YoungsterComponent extends SpriteBodyComponent
   }) {
     final title = [
       SpritesTitles.youngBoy,
-      SpritesTitles.youngGirl
-    ][math.Random().nextInt(2)];
+      SpritesTitles.youngGirl,
+      SpritesTitles.princess,
+    ][math.Random().nextInt(3)];
 
     return YoungsterComponent(
       game: game,
-      position: position,
-      size: Vector2(150, 220),
+      size: Vector2(130, 220),
+      initialPosition: position,
       title: title,
     );
   }
+  @override
+  final debugMode = false;
+
+  final Vector2 initialPosition;
+  final Vector2 size;
+
   final _candies = <SpritesTitles, int>{};
   final _candiesBodies = <SpritesTitles, FlyingCandyComponent>{};
   void addCandy(SpritesTitles title) {
@@ -61,10 +72,8 @@ class YoungsterComponent extends SpriteBodyComponent
   }
 
   final String id;
-  final Vector2 position;
   final SpritesTitles title;
   final AppGame game;
-  final Sprite sprite;
 
   ThrowingTrajectoryComponent? throwingTrajectory;
   bool dragging = false;
@@ -140,7 +149,7 @@ class YoungsterComponent extends SpriteBodyComponent
 
     final bodyDef = BodyDef()
       ..userData = this
-      ..position = position
+      ..position = initialPosition
       ..type = BodyType.static;
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
@@ -152,9 +161,20 @@ class YoungsterComponent extends SpriteBodyComponent
     await super.onLoad();
     throwingTrajectory = ThrowingTrajectoryComponent(
       game: game,
-      position: position,
+      position: body.position,
     );
     await add(throwingTrajectory!);
+    final sprites = <Sprite>[];
+    for (int i = 1; i <= 6; i++) {
+      final spritePath = '${describeEnum(title).snakeCase}_idle/$i.png';
+      sprites.add(await game.loadSprite(spritePath));
+    }
+    await add(
+      YoungsterAnimationComponent(
+        SpriteAnimation.spriteList(sprites, stepTime: 0.1),
+        size,
+      ),
+    );
   }
 
   @override

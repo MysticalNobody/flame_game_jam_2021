@@ -21,6 +21,7 @@ enum SpritesTitles {
   bgRoadMiddle,
   youngBoy,
   youngGirl,
+  princess,
 }
 
 class SpritesCache with Loadable {
