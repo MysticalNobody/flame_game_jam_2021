@@ -123,9 +123,14 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     // if ((dragDiff?.length ?? 0) > 20) {
     if (dragEnabled) {
       SpritesTitles? title;
+      bool addCandy = false;
       if (candyKeeper.candies.isNotEmpty) {
         title = candyKeeper.candies.last;
         candyKeeper.removeCandy(title);
+        addCandy = true;
+      }
+      if (debugMode) addCandy = true;
+      if (addCandy) {
         game.add(
           FlyingCandyComponent.create(
             game: game,
@@ -135,9 +140,9 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
           ),
         );
         // }
-        dragging = false;
         log('velocity ${event.velocity} dragDiff $dragDiff ');
       }
+      dragging = false;
     }
     return super.onDragEnd(pointerId, event);
   }
