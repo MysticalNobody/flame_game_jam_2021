@@ -38,6 +38,7 @@ class WinContactCallback
   void begin(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {
     log(b.body.toString());
     b.candyKeeper.addCandy(a.title);
+    game.remove(a);
     onWin();
   }
 
