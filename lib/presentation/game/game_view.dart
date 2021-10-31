@@ -101,7 +101,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
-    debugMode = true;
+    // debugMode = true;
     await spritesCache.onLoad();
     // world.setGravity(Vector2(200, -10));
     // skyParallax = await createParallaxComponent('bg_sky.png');
@@ -181,7 +181,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
-    final ghostsPositions = List.generate(50, (index) => 400 + 30 * index);
+    final ghostsPositions = List.generate(50, (index) => 400 + 60 * index);
     final rand = math.Random();
 
     final ghosts = List.generate(10, (i) => i)

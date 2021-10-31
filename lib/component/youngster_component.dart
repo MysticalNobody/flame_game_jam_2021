@@ -174,11 +174,10 @@ class ThrowingTrajectoryComponent extends PositionComponent with HasPaint {
     super.render(canvas);
     if (!show) return;
     for (int time = 0; time < 10; time++) {
-      double x = -position.x -
-          velocity.x * time -
-          (game.world.gravity.x / 2) * time * time;
+      double x =
+          -position.x - velocity.x * time - game.world.gravity.x * time * time;
       double y = -position.y +
-          (velocity.y * time - (game.world.gravity.y / 2) * time * time);
+          (velocity.y * time - game.world.gravity.y * time * time);
       canvas.drawCircle(Offset(x, y), 5, paint);
     }
   }

@@ -213,29 +213,48 @@ class KillingObstacleComponent extends BaseObstacleComponent {
           title: title,
           type: type,
         );
+  KillingObstacleComponent.animated({
+    required AppGame game,
+    required SpritesTitles title,
+    required List<Sprite> sprites,
+    required double stepTime,
+    required Vector2 position,
+    required Vector2 size,
+    BodyType type = BodyType.dynamic,
+  }) : super.animated(
+          game: game,
+          position: position,
+          size: size,
+          title: title,
+          type: type,
+          sprites: sprites,
+          stepTime: stepTime,
+        );
   factory KillingObstacleComponent.create({
     required AppGame game,
     required Vector2 position,
   }) {
-    final title = [
+    final titles = [
       SpritesTitles.ghost1,
       SpritesTitles.ghost2,
       SpritesTitles.ghost3,
       SpritesTitles.ghost4,
       SpritesTitles.ghost5,
-    ][math.Random().nextInt(5)];
-
-    return KillingObstacleComponent(
+    ];
+    final title = titles[math.Random().nextInt(5)];
+    return KillingObstacleComponent.animated(
       game: game,
       title: title,
       position: position,
-      size: Vector2(100, 80),
+      size: Vector2(100, 120),
+      stepTime: 1,
+      sprites: titles.map((_) => game.getSprite(_)).toList(),
     );
   }
 }
 
 /// Like a ghost
-class BaseObstacleComponent extends SpriteBodyComponent {
+class BaseObstacleComponent extends AnimatedSpriteBodyComponent {
   BaseObstacleComponent({
     required this.title,
     required this.game,
@@ -243,7 +262,23 @@ class BaseObstacleComponent extends SpriteBodyComponent {
     required Vector2 size,
     this.type = BodyType.dynamic,
   })  : sprite = game.getSprite(title),
-        super(game.getSprite(title), size);
+        super(
+          SpriteAnimation.spriteList([game.getSprite(title)], stepTime: 1),
+          size,
+        );
+  BaseObstacleComponent.animated({
+    required this.title,
+    required List<Sprite> sprites,
+    required double stepTime,
+    required this.game,
+    required this.position,
+    required Vector2 size,
+    this.type = BodyType.dynamic,
+  })  : sprite = game.getSprite(title),
+        super(
+          SpriteAnimation.spriteList(sprites, stepTime: stepTime),
+          size,
+        );
 
   final Vector2 position;
   final SpritesTitles title;
