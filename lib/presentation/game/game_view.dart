@@ -25,7 +25,6 @@ class AppGameView extends StatefulWidget {
     Key? key,
   }) : super(key: key);
   final Game game;
-
   @override
   _AppGameViewState createState() => _AppGameViewState();
 }
@@ -69,14 +68,18 @@ class _AppGameViewState extends State<AppGameView> {
 
   @override
   Widget build(BuildContext context) {
-    return AppGameWidget(game: widget.game);
+    return AppGameWidget(
+      game: widget.game,
+    );
   }
 }
 
 class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   AppGame({
     required this.onAssetsLoad,
+    required this.onGameOver,
   });
+  final ValueChanged<Duration> onGameOver;
   final FutureVoidCallback onAssetsLoad;
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
@@ -89,7 +92,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Vector2? lastDiff;
 
   late ParallaxComponent parallaxCom;
-
+  late DateTime initTimestamp;
   @override
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
@@ -104,6 +107,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   @override
   Future<void> onLoad() async {
+    initTimestamp = DateTime.now();
     debugMode = false;
     await spritesCache.onLoad();
     final backSize = (await loadParallaxComponent(
@@ -118,7 +122,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           ..prepare(this))
         .parallax!
         .size;
-    const backsCount = 4;
+    const backsCount = 16;
     final levelLength = backSize.x * backsCount;
 
     camera.worldBounds = Rect.fromLTRB(0, 0, levelLength, backSize.y * 1.2);
@@ -189,7 +193,16 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       ),
     );
 
-    addContactCallback(WinContactCallback(game: this, onWin: () {}));
+    addContactCallback(
+      WinContactCallback(
+        game: this,
+        onWin: () {
+          final newTimestamp = DateTime.now();
+          final diff = initTimestamp.difference(newTimestamp);
+          onGameOver(diff);
+        },
+      ),
+    );
     addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
     addContactCallback(GroundContactCallback(game: this));

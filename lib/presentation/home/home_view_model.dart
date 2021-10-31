@@ -1,6 +1,6 @@
 import 'package:stacked/stacked.dart';
 
-enum Pages { menu, hint, game, finish }
+enum Pages { menu, hint, game, gameOver }
 
 class HomeViewModel extends BaseViewModel {
   Pages page = Pages.menu;
@@ -11,4 +11,10 @@ class HomeViewModel extends BaseViewModel {
   }
 
   Future<void> init() async {}
+  int seconds = 0;
+  void showGameOver(Duration newSeconds) {
+    seconds = newSeconds.inSeconds;
+    if (seconds < 0) seconds *= -1;
+    changePage(Pages.gameOver);
+  }
 }

@@ -61,7 +61,7 @@ class WinContactCallback
     log(b.body.toString());
     b.candyKeeper.addCandy(a.title);
     game.remove(a);
-    if (b.candyKeeper.candies.length == game.initalCandyCount) {
+    if (b.candyKeeper.candies.length > game.initalCandyCount) {
       onWin();
     }
   }
@@ -191,7 +191,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
       return KillingObstacleComponent.animated(
         game: game,
         position: position,
-        size: Vector2(100, 120),
+        size: Vector2(140, 200),
         stepTime: 0.1,
         sprites: sprites,
         ghostData: data,
