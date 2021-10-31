@@ -41,12 +41,14 @@ class _AppGameViewState extends State<AppGameView> {
   }
 
   Future<void> play(int num) async {
-    await FlameAudio.playLongAudio(audios[num]);
-    await FlameAudio.audioCache.fixedPlayer?.onPlayerCompletion.single;
-    if (num + 1 < audios.length) {
-      await play(num + 1);
-    } else {
-      await play(0);
+    if (!kDebugMode) {
+      await FlameAudio.playLongAudio(audios[num]);
+      await FlameAudio.audioCache.fixedPlayer?.onPlayerCompletion.single;
+      if (num + 1 < audios.length) {
+        await play(num + 1);
+      } else {
+        await play(0);
+      }
     }
   }
 

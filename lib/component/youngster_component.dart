@@ -83,7 +83,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
       initialCandiesCount: initialCandiesCount,
     );
   }
-  late final candyKeeper = CandyKeeper(position: body.position, game: game);
+  late final candyKeeper = CandyKeeper(position: initialPosition, game: game);
   final Vector2 initialPosition;
   final Vector2 size;
 
@@ -126,7 +126,6 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
       if (candyKeeper.candies.isNotEmpty || debugMode) {
         title = candyKeeper.candies.last;
         candyKeeper.removeCandy(title);
-      } else {
         game.add(
           FlyingCandyComponent.create(
             game: game,

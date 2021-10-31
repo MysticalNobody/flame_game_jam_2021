@@ -115,7 +115,7 @@ class WinObstacleComponent extends BaseObstacleComponent {
         size: Vector2(100, 100),
       );
 
-  late final candyKeeper = CandyKeeper(game: game, position: body.position);
+  late final candyKeeper = CandyKeeper(position: position, game: game);
 }
 
 /// Like a wall
