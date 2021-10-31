@@ -260,7 +260,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   void onDragUpdate(int pointerId, DragUpdateInfo details) {
     if (isDragging && dragStart != null) {
       lastDiff = details.eventPosition.game - dragStart!;
-      const moveCoeff = .7;
+      const moveCoeff = .5;
       final camPos = camera.position;
       camera.snapTo(
         Vector2(
