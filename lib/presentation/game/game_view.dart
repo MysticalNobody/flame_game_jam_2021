@@ -107,14 +107,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     treesParallax = await createParallaxComponent('bg_trees.png');
     await addAll([skyParallax, treesParallax]);
 
-    final size = getSprite(SpritesTitles.bgHome).srcSize;
-    final diff = size.y / worldBounds.height;
-    final homeSize = Vector2(size.x / diff, worldBounds.height);
-    BackgroundComponent(
-      size: homeSize,
-      sprite: getSprite(SpritesTitles.bgHome),
-      position: Vector2(0, -(worldBounds.height - homeSize.y)),
-    );
     final home =
         BackgroundComponent.create(game: this, title: SpritesTitles.bgHome);
     final road = BackgroundComponent.create(
