@@ -1,5 +1,7 @@
 part of components;
 
+typedef CandiesCountList = List<SpritesTitles>;
+
 class YoungsterAnimationComponent extends SpriteAnimationComponent {
   YoungsterAnimationComponent(
     SpriteAnimation animation,
@@ -38,37 +40,43 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   final Vector2 initialPosition;
   final Vector2 size;
 
-  final _candies = <SpritesTitles, int>{};
-  final _candiesBodies = <SpritesTitles, FlyingCandyComponent>{};
+  final CandiesCountList _candies = <SpritesTitles>[];
+  final _candiesBodies = <IdleCandyComponent>[];
+
   void addCandy(SpritesTitles title) {
-    final isExisted = _candies.containsKey(title);
-    _candies[title] = (_candies[title] ?? 0) + 1;
-    final positionX = body.position.x + FlyingCandyComponent.shapeSize;
-    final position = Vector2(positionX, body.position.y);
-    if (!isExisted) {
-      final candy = FlyingCandyComponent.create(
-        game: game,
-        velocity: Vector2.zero(),
-        position: position,
-        title: title,
-      )..inPlayerBag = true;
-      game.add(candy);
-      _candiesBodies[title] = candy;
+    _candies.add(title);
+    const countInColumn = 10;
+    final columnsCount = _candies.length ~/ countInColumn;
+    final totalCount = columnsCount * countInColumn;
+    int countInCurrentColumn = totalCount - _candies.length;
+    if (countInCurrentColumn < 0) {
+      countInCurrentColumn *= -1;
+      countInCurrentColumn--;
     }
+
+    final position = Vector2(
+      body.position.x + 90 + 30 * columnsCount,
+      -game.bottomLine -
+          (FlyingCandyComponent.shapeSize * countInCurrentColumn) +
+          60,
+    );
+    final candy = IdleCandyComponent.create(
+      game: game,
+      position: position,
+      title: title,
+    );
+    game.add(candy);
+    _candiesBodies.add(candy);
   }
 
   void removeCandy(SpritesTitles title) {
-    final isExists = _candies.containsKey(title);
-    if (isExists) {
-      final count = _candies[title] ?? 0;
-      if (count > 1) {
-        _candies[title] = count - 1;
-      } else {
-        _candies.remove(title);
-        final candy = _candiesBodies[title];
-        if (candy != null) game.remove(candy);
-      }
+    if (_candies.isEmpty) return;
+    final candy = _candiesBodies.last;
+    if (candy.isMounted) {
+      game.remove(candy);
     }
+    _candiesBodies.removeLast();
+    _candies.removeLast();
   }
 
   final String id;
@@ -80,6 +88,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   Vector2? dragStart;
   Vector2? dragDiff;
   bool get dragEnabled => game.player.id == id;
+
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
     if (dragEnabled) {
@@ -106,7 +115,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     if (dragEnabled) {
       SpritesTitles? title;
       if (_candies.isNotEmpty) {
-        title = _candies.keys.first;
+        title = _candies.last;
         removeCandy(title);
       }
       game.add(
@@ -182,7 +191,9 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     super.update(dt);
     if (throwingTrajectory != null && dragging) {
       throwingTrajectory!.showDrag(
-          Vector2(body.position.x, 130 + body.position.y), dragDiff! * 3);
+        Vector2(body.position.x, 130 + body.position.y),
+        dragDiff! * 3,
+      );
     } else {
       throwingTrajectory!.hideDrag();
     }
@@ -190,6 +201,44 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
 
   @override
   List<Object?> get props => [id];
+}
+
+class IdleCandyComponent extends SpriteComponent {
+  IdleCandyComponent({
+    required this.game,
+    required Vector2 position,
+    required this.title,
+    required Vector2 size,
+  })  : id = uuid.v4(),
+        super(
+          size: size,
+          position: position,
+          priority: ComponentsPriority.candy.index,
+          sprite: game.getSprite(title),
+        );
+  factory IdleCandyComponent.create({
+    required AppGame game,
+    required Vector2 position,
+    required SpritesTitles title,
+  }) =>
+      IdleCandyComponent(
+        game: game,
+        title: title,
+        size: Vector2(
+          FlyingCandyComponent.shapeSize,
+          FlyingCandyComponent.shapeSize,
+        ),
+        position: position,
+      );
+
+  static final TextPaint textConfig = TextPaint(
+    config: const TextPaintConfig(
+      color: Color(0xFFFFFFFF),
+    ),
+  );
+  final SpritesTitles title;
+  final AppGame game;
+  final Id id;
 }
 
 class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
