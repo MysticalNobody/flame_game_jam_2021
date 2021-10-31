@@ -128,9 +128,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     //   alignment: Alignment.bottomCenter,
     // ),
 
-    // addContactCallback(WinContactCallback(game: this, onWin: () {}));
-    // addContactCallback(KillingContactCallback(game: this, onKill: () {}));
-    // addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
+    addContactCallback(WinContactCallback(game: this, onWin: () {}));
+    addContactCallback(KillingContactCallback(game: this, onKill: () {}));
+    addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
     com = YoungsterComponent.create(
       game: this,
