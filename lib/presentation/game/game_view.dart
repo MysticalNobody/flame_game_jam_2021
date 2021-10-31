@@ -81,43 +81,18 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   @override
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
+    debugMode = false;
     camera.zoom =
         window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
   }
 
-  // late ParallaxComponent<AppGame> skyParallax;
-  // late ParallaxComponent<AppGame> treesParallax;
-  Future<ParallaxComponent<AppGame>> createParallaxComponent(
-    String image,
-  ) async {
-    final images = [
-      await loadParallaxImage(image),
-    ];
-    final layers = images
-        .map(
-          (image) =>
-              ParallaxLayer(image, velocityMultiplier: Vector2(1.8, -1.8))
-                ..resize(size),
-        )
-        .toList();
-
-    return ParallaxComponent.fromParallax(
-      Parallax(layers),
-      priority: -1,
-    );
-  }
-
-  double get bottomLine => -worldBounds.bottom + 100;
+  double get bottomLine => -worldBounds.bottom + 140;
   Rect get worldBounds => camera.worldBounds!;
 
   @override
   Future<void> onLoad() async {
-    // debugMode = true;
+    debugMode = false;
     await spritesCache.onLoad();
-    // world.setGravity(Vector2(200, -10));
-    // skyParallax = await createParallaxComponent('bg_sky.png');
-    // treesParallax = await createParallaxComponent('bg_trees.png');
-    // await addAll([skyParallax, treesParallax]);
     final backSize = (await loadParallaxComponent(
       [
         ParallaxImageData('bg_road_start.png'), //1.44
@@ -226,6 +201,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
     await FlameAudio.audioCache.loadAll(audios);
     gameCamera.initCameraPosition();
+    debugMode = false;
   }
 
   @override

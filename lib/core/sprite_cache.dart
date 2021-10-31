@@ -7,6 +7,12 @@ enum SpritesTitles {
   ghost3,
   ghost4,
   ghost5,
+  candy1,
+  candy2,
+  candy3,
+  candy4,
+  candy5,
+  candy6,
   bg,
   bgHome,
   bgHome1,
@@ -15,6 +21,7 @@ enum SpritesTitles {
   bgRoadMiddle,
   youngBoy,
   youngGirl,
+  princess,
 }
 
 class SpritesCache with Loadable {

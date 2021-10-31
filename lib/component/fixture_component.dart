@@ -20,7 +20,8 @@ class PlayerContactCallback
   @override
   void begin(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {
     log(b.body.toString());
-    onContact(b);
+    // onContact(b);
+    b.addCandy(a.title);
     game.remove(a);
   }
 

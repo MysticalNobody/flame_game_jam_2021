@@ -79,6 +79,12 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/princess_idle/
+    - assets/images/princess_throw/
+    - assets/images/young_boy_idle/
+    - assets/images/young_boy_throw/
+    - assets/images/young_girl_idle/
+    - assets/images/young_girl_throw/
     - assets/audio/
 
   # To add assets to your application, add an assets section, like this:
