@@ -60,35 +60,29 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                     Center(
-                      child: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          minSize: 0,
-                          child: SizedBox(
-                            width: 1000,
-                            height: 500,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Image.asset(
-                                    'assets/images/button.png',
-                                    fit: BoxFit.fitHeight,
-                                  ),
-                                ),
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 140),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 100),
+                        child: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            minSize: 0,
+                            child: SizedBox(
+                              width: 1000,
+                              height: 500,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
                                     child: Image.asset(
-                                      'assets/images/play_button.png',
+                                      'assets/images/button.png',
                                       fit: BoxFit.fitHeight,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            model.changePage(Pages.hint);
-                          }),
+                            onPressed: () {
+                              model.changePage(Pages.hint);
+                            }),
+                      ),
                     )
                   ],
                 ),
