@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:example/component/components.dart';
 import 'package:example/component/ground_component.dart';
 import 'package:example/core/core.dart';
@@ -12,6 +14,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -28,22 +31,29 @@ class AppGameView extends StatefulWidget {
   _AppGameViewState createState() => _AppGameViewState();
 }
 
+final audios = List.generate(5, (index) => 'bg_${index + 1}.mp3');
+
 class _AppGameViewState extends State<AppGameView> {
-  // final player = AudioPlayer();
   @override
   void initState() {
-    play();
+    FlameAudio.audioCache.fixedPlayer = AudioPlayer();
+    play(0);
     super.initState();
   }
 
-  Future<void> play() async {
-    // await player.setAsset('assets/audio/pixies-where-is-my-mind.mp3');
-    // await player.play();
+  Future<void> play(int num) async {
+    await FlameAudio.playLongAudio(audios[num]);
+    await FlameAudio.audioCache.fixedPlayer?.onPlayerCompletion.single;
+    if (num + 1 < audios.length) {
+      play(num + 1);
+    } else {
+      play(0);
+    }
   }
 
   @override
   void dispose() {
-    // player.stop();
+    FlameAudio.audioCache.fixedPlayer?.stop();
     super.dispose();
   }
 
@@ -99,6 +109,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   double get bottomLine => -worldBounds.bottom + 100;
   Rect get worldBounds => camera.worldBounds!;
+
   @override
   Future<void> onLoad() async {
     // debugMode = true;
@@ -107,7 +118,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     // skyParallax = await createParallaxComponent('bg_sky.png');
     // treesParallax = await createParallaxComponent('bg_trees.png');
     // await addAll([skyParallax, treesParallax]);
-
     final backSize = (await loadParallaxComponent(
       [
         ParallaxImageData('bg_road_start.png'), //1.44
@@ -213,6 +223,8 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     );
     await onAssetsLoad();
     await super.onLoad();
+
+    await FlameAudio.audioCache.loadAll(audios);
     gameCamera.initCameraPosition();
   }
 
