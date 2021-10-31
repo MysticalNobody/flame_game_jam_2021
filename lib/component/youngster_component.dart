@@ -42,8 +42,7 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
     final defaultVelocity = Vector2(300, 300);
     final effectiveVelocity = defaultVelocity
       ..multiply(
-        (-dragDiff!
-          ..divide(defaultVelocity)),
+        (defaultVelocity..sub(-dragDiff!)),
       );
     game.add(
       FlyingCandyComponent(
