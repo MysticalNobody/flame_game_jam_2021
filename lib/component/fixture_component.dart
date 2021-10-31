@@ -137,7 +137,7 @@ class WinObstacleComponent extends BaseObstacleComponent {
   }) =>
       WinObstacleComponent(
         game: game,
-        title: SpritesTitles.wall,
+        title: SpritesTitles.candyBag,
         position: position,
         size: Vector2(100, 100),
       );
@@ -164,7 +164,7 @@ class BounceObstacleComponent extends BaseObstacleComponent {
   }) =>
       BounceObstacleComponent(
         game: game,
-        title: SpritesTitles.wall,
+        title: SpritesTitles.candyBag,
         position: position,
         type: BodyType.static,
         size: Vector2(100, 100),
@@ -189,13 +189,22 @@ class KillingObstacleComponent extends BaseObstacleComponent {
   factory KillingObstacleComponent.create({
     required AppGame game,
     required Vector2 position,
-  }) =>
-      KillingObstacleComponent(
-        game: game,
-        title: SpritesTitles.ghost,
-        position: position,
-        size: Vector2(100, 80),
-      );
+  }) {
+    final title = [
+      SpritesTitles.ghost1,
+      SpritesTitles.ghost2,
+      SpritesTitles.ghost3,
+      SpritesTitles.ghost4,
+      SpritesTitles.ghost5,
+    ][math.Random().nextInt(5)];
+
+    return KillingObstacleComponent(
+      game: game,
+      title: title,
+      position: position,
+      size: Vector2(100, 80),
+    );
+  }
 }
 
 /// Like a ghost

@@ -9,6 +9,23 @@ class YoungsterComponent extends SpriteBodyComponent with Draggable {
   })  : sprite = game.getSprite(title),
         super(game.getSprite(title), size);
 
+  factory YoungsterComponent.create({
+    required AppGame game,
+    required Vector2 position,
+  }) {
+    final title = [
+      SpritesTitles.youngBoy,
+      SpritesTitles.youngGirl
+    ][math.Random().nextInt(2)];
+
+    return YoungsterComponent(
+      game: game,
+      position: position,
+      size: Vector2(100, 100),
+      title: title,
+    );
+  }
+
   final Vector2 position;
   final SpritesTitles title;
   final AppGame game;
@@ -121,9 +138,9 @@ class FlyingCandyComponent extends BodyComponent with HasPaint {
 
     final fixtureDef = FixtureDef(shape)
       ..userData = this // To be able to determine object in collision
-      ..restitution = 0.3
+      ..restitution = 0.1
       ..density = 1.0
-      ..friction = 0.2;
+      ..friction = 0.5;
 
     final bodyDef = BodyDef()
       ..position = position

@@ -85,10 +85,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     await add(
       await loadParallaxComponent(
         [
-          ParallaxImageData('0.png'),
-          ParallaxImageData('1.png'),
-          ParallaxImageData('2.png'),
-          ParallaxImageData('3.png'),
+          ParallaxImageData('bg_road_start.png'),
+          ParallaxImageData('bg_home.png'),
+          ParallaxImageData('bg_trees.png'),
+          ParallaxImageData('bg_sky.png'),
+
           // ParallaxImageData('bg.png'),
         ],
         priority: -1,
@@ -102,11 +103,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     // addContactCallback(KillingContactCallback(game: this, onKill: () {}));
     // addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
 
-    com = YoungsterComponent(
+    com = YoungsterComponent.create(
       game: this,
-      title: SpritesTitles.ghost,
       position: Vector2(300, -700),
-      size: Vector2(100, 100),
     );
     await add(com);
     // gameCamera.followComponent(com.positionComponent);
