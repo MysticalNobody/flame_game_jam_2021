@@ -97,11 +97,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     );
   }
 
-  double get bottomLine => -worldBounds.bottom + 100;
+  double get bottomLine => -worldBounds.bottom + 140;
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
-    // debugMode = true;
+    debugMode = true;
     await spritesCache.onLoad();
     // world.setGravity(Vector2(200, -10));
     // skyParallax = await createParallaxComponent('bg_sky.png');
