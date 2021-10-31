@@ -72,8 +72,7 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   Positioned.fill(
                                     child: Image.asset(
-                                      'assets/images/button.png',
-                                      fit: BoxFit.fitHeight,
+                                      'assets/images/play_button.png',
                                     ),
                                   ),
                                 ],
