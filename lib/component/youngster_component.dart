@@ -123,7 +123,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     // if ((dragDiff?.length ?? 0) > 20) {
     if (dragEnabled) {
       SpritesTitles? title;
-      if (candyKeeper.candies.isNotEmpty || debugMode) {
+      if (candyKeeper.candies.isNotEmpty) {
         title = candyKeeper.candies.last;
         candyKeeper.removeCandy(title);
         game.add(
