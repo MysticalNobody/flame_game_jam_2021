@@ -74,18 +74,13 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
   }
 
-  Rect get worldBounds => camera.worldBounds!;
-  @override
-  Future<void> onLoad() async {
-    debugMode = true;
-    await spritesCache.onLoad();
-    // world.setGravity(Vector2(200, -10));
-    await addAll(createBoundaries(this));
+  late ParallaxComponent<AppGame> skyParallax;
+  late ParallaxComponent<AppGame> treesParallax;
+  Future<ParallaxComponent<AppGame>> createParallaxComponent(
+    String image,
+  ) async {
     final images = [
-      await loadParallaxImage('bg_sky.png'),
-      await loadParallaxImage('bg_trees.png'),
-      await loadParallaxImage('bg_home.png'),
-      await loadParallaxImage('bg_road_start.png'),
+      await loadParallaxImage(image),
     ];
     final layers = images
         .map(
@@ -96,29 +91,51 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         )
         .toList();
 
-    final parallaxComponent = ParallaxComponent.fromParallax(
-      Parallax(
-        layers,
-        // baseVelocity: Vector2(50, 0),
-      ),
+    return ParallaxComponent.fromParallax(
+      Parallax(layers),
       priority: -1,
     );
-    await add(parallaxComponent
-        // await loadParallaxComponent(
-        //   [
-        //     ParallaxImageData('bg_road_start.png'),
-        //     ParallaxImageData('bg_home.png'),
-        //     ParallaxImageData('bg_trees.png'),
-        //     ParallaxImageData('bg_sky.png'),
+  }
 
-        //     // ParallaxImageData('bg.png'),
-        //   ],
-        //   priority: -1,
-        //   // baseVelocity: Vector2(20, 0),
-        //   velocityMultiplierDelta: Vector2(1.8, 0),
-        //   alignment: Alignment.bottomCenter,
-        // ),
-        );
+  Rect get worldBounds => camera.worldBounds!;
+  @override
+  Future<void> onLoad() async {
+    debugMode = true;
+    await spritesCache.onLoad();
+    // world.setGravity(Vector2(200, -10));
+    await addAll(createBoundaries(this));
+    skyParallax = await createParallaxComponent('bg_sky.png');
+    treesParallax = await createParallaxComponent('bg_trees.png');
+    await addAll([skyParallax, treesParallax]);
+    // final home = BackgroundComponent(
+    //   size: Vector2(
+    //     getSprite(SpritesTitles.bgHome).srcSize.x,
+    //     worldBounds.height,
+    //   ),
+    //   sprite: getSprite(SpritesTitles.bgHome),
+    //   position: Vector2.zero(),
+    // );
+    final size = getSprite(SpritesTitles.bgHome).srcSize
+      ..clamp(Vector2(200, 200), worldBounds.toVector2());
+    final home = BackgroundComponent(
+      size: size,
+      sprite: getSprite(SpritesTitles.bgHome),
+      position: Vector2(0, -size.y),
+    );
+    await addAll([home]);
+    //   [
+    //     ParallaxImageData('bg_road_start.png'),
+    //     ParallaxImageData('bg_home.png'),
+    //     ParallaxImageData('bg_trees.png'),
+    //     ParallaxImageData('bg_sky.png'),
+
+    //     // ParallaxImageData('bg.png'),
+    //   ],
+    //   priority: -1,
+    //   // baseVelocity: Vector2(20, 0),
+    //   velocityMultiplierDelta: Vector2(1.8, 0),
+    //   alignment: Alignment.bottomCenter,
+    // ),
 
     // addContactCallback(WinContactCallback(game: this, onWin: () {}));
     // addContactCallback(KillingContactCallback(game: this, onKill: () {}));
@@ -193,7 +210,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       dragStart = dragStart! + lastDiff!;
       log('cam: $camPos');
       log('final ${finalCamPos.toString()}');
+      skyParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 1);
+      treesParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 4);
     } else if (isDragging) {
+      skyParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
+      treesParallax.parallax!.baseVelocity.setFrom(Vector2.zero());
       lastDiff = event.eventPosition.game - dragStart!;
     }
     super.onDragUpdate(pointerId, event);
