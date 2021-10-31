@@ -105,7 +105,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     com = YoungsterComponent(
       game: this,
       title: SpritesTitles.ghost,
-      position: Vector2(100, -700),
+      position: Vector2(300, -700),
       size: Vector2(100, 100),
     );
     await add(com);
