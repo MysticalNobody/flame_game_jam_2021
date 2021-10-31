@@ -87,13 +87,73 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ),
                           onPressed: () {
-                            model.changePage(Pages.game);
+                            model.changePage(Pages.hint);
                           }),
                     )
                   ],
                 ),
               )
             ],
+          );
+        } else if (model.page == Pages.hint) {
+          return Material(
+            color: Colors.black,
+            child: GestureDetector(
+              onTap: () {
+                model.changePage(Pages.game);
+              },
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: .4,
+                    child: Image.asset(
+                      'assets/images/bg.png',
+                      fit: BoxFit.cover,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                  ),
+                  Center(
+                      child: Opacity(
+                    opacity: .8,
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      width: MediaQuery.of(context).size.width - 64,
+                      height: MediaQuery.of(context).size.height - 64,
+                      decoration: BoxDecoration(
+                          color: Color(0xffeb9062),
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                  'How to play',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                Divider(),
+                                Text(
+                                  'The goal of the game is to deliver the most candy to the box. If the candy touches a monster or the ground, it disappears.\n\nGood luck!\n\n',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w300),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'tap to start',
+                            style: TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+                ],
+              ),
+            ),
           );
         } else {
           return AppGameView(
