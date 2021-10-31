@@ -12,28 +12,47 @@ enum ObstacleType {
   lose,
 }
 
+class PlayerContactCallback
+    extends ContactCallback<FlyingCandyComponent, YoungsterComponent> {
+  PlayerContactCallback({required this.game, required this.onContact});
+  final widgets.ValueChanged<YoungsterComponent> onContact;
+  final AppGame game;
+  @override
+  void begin(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {
+    log(b.body.toString());
+    onContact(b);
+  }
+
+  @override
+  void end(FlyingCandyComponent a, YoungsterComponent b, Contact contact) {}
+}
+
 class WinContactCallback
-    extends ContactCallback<CandyBagComponent, WinObstacleComponent> {
+    extends ContactCallback<FlyingCandyComponent, WinObstacleComponent> {
   WinContactCallback({required this.game, required this.onWin});
   final widgets.VoidCallback onWin;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, WinObstacleComponent b, Contact contact) {
+  void begin(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {
     log(b.body.toString());
     onWin();
   }
 
   @override
-  void end(CandyBagComponent a, WinObstacleComponent b, Contact contact) {}
+  void end(FlyingCandyComponent a, WinObstacleComponent b, Contact contact) {}
 }
 
 class KillingContactCallback
-    extends ContactCallback<CandyBagComponent, KillingObstacleComponent> {
+    extends ContactCallback<FlyingCandyComponent, KillingObstacleComponent> {
   KillingContactCallback({required this.game, required this.onKill});
   final widgets.VoidCallback onKill;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, KillingObstacleComponent b, Contact contact) {
+  void begin(
+    FlyingCandyComponent a,
+    KillingObstacleComponent b,
+    Contact contact,
+  ) {
     log(b.body.toString());
 
     game.remove(a);
@@ -41,21 +60,29 @@ class KillingContactCallback
   }
 
   @override
-  void end(CandyBagComponent a, KillingObstacleComponent b, Contact contact) {}
+  void end(
+    FlyingCandyComponent a,
+    KillingObstacleComponent b,
+    Contact contact,
+  ) {}
 }
 
 class BounceContactCallback
-    extends ContactCallback<CandyBagComponent, BounceContactCallback> {
+    extends ContactCallback<FlyingCandyComponent, BounceContactCallback> {
   BounceContactCallback({required this.game, required this.onBounce});
   final widgets.VoidCallback onBounce;
   final AppGame game;
   @override
-  void begin(CandyBagComponent a, BounceContactCallback b, Contact contact) {
+  void begin(FlyingCandyComponent a, BounceContactCallback b, Contact contact) {
     log(b.toString());
   }
 
   @override
-  void end(CandyBagComponent a, BounceContactCallback b, Contact contact) {}
+  void end(
+    FlyingCandyComponent a,
+    BounceContactCallback b,
+    Contact contact,
+  ) {}
 }
 
 /// Like a door or another player
@@ -225,17 +252,12 @@ class BaseObstacleComponent extends SpriteBodyComponent {
   final BodyType type;
 
   async.Timer? timer;
-  widgets.AxisDirection impulseDirection = widgets.AxisDirection.up;
   void moveAlongPoints() {
     timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
-      final dir = [-1, -1, 0, 1, 1][math.Random().nextInt(5)];
-
-      body.applyLinearImpulse(Vector2(0, dir * 2000));
-      if (impulseDirection == widgets.AxisDirection.up) {
-        impulseDirection = widgets.AxisDirection.down;
-      } else {
-        impulseDirection = widgets.AxisDirection.up;
-      }
+      final rand = math.Random();
+      final sign = [-1, -1, 0, 1, 1][rand.nextInt(5)];
+      final dir = [1, 0, 0, 0, 1][rand.nextInt(5)];
+      body.applyLinearImpulse(Vector2(dir * sign * 2000, dir * sign * 2000));
     });
   }
 

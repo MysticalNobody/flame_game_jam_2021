@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:example/component/components.dart';
@@ -61,7 +61,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   late final GameCamera gameCamera = GameCamera(game: this);
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
-  late YoungsterComponent com;
+  late YoungsterComponent player;
   bool isDragging = false;
   Vector2? dragStart;
   Vector2? lastDiff;
@@ -97,6 +97,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     );
   }
 
+  double get bottomLine => -worldBounds.bottom + 100;
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
@@ -137,7 +138,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       getSprite(SpritesTitles.bgHome1),
       getSprite(SpritesTitles.bgHome2),
     ];
-    final r = Random();
+    final r = math.Random();
     for (int i = 0; i < 4; i++) {
       final backLeftTop = Vector2(
         worldBounds.left + i * backSize.x,
@@ -158,63 +159,53 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       await addAll([home, road]);
     }
 
-    //   [
-    //     ParallaxImageData('bg_road_start.png'),
-    //     ParallaxImageData('bg_home.png'),
-    //     ParallaxImageData('bg_trees.png'),
-    //     ParallaxImageData('bg_sky.png'),
-
-    //     // ParallaxImageData('bg.png'),
-    //   ],
-    //   priority: -1,
-    //   // baseVelocity: Vector2(20, 0),
-    //   velocityMultiplierDelta: Vector2(1.8, 0),
-    //   alignment: Alignment.bottomCenter,
-    // ),
-
-    // addContactCallback(WinContactCallback(game: this, onWin: () {}));
-    // addContactCallback(KillingContactCallback(game: this, onKill: () {}));
-    // addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
-
-    com = YoungsterComponent.create(
-      game: this,
-      position: Vector2(300, -700),
+    final players = [300, 800, 1400, 2000].map(
+      (e) => YoungsterComponent.create(
+        game: this,
+        position: Vector2(e.toDouble(), bottomLine),
+      ),
     );
-    await add(com);
+
+    await addAll(players.toList());
+    player = players.first;
+
+    addContactCallback(
+      PlayerContactCallback(
+        game: this,
+        onContact: (newPlayer) {
+          player = newPlayer;
+        },
+      ),
+    );
+    addContactCallback(WinContactCallback(game: this, onWin: () {}));
+    addContactCallback(KillingContactCallback(game: this, onKill: () {}));
+    addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
+
+    final ghostsPositions = List.generate(50, (index) => 400 + 30 * index);
+    final rand = math.Random();
+
+    final ghosts = List.generate(10, (i) => i)
+        .map(
+          (_) => KillingObstacleComponent.create(
+            game: this,
+            position: Vector2(
+              ghostsPositions[rand.nextInt(ghostsPositions.length)].toDouble(),
+              -145,
+            ),
+          ),
+        )
+        .toList();
     // gameCamera.followComponent(com.positionComponent);
-    final killingObstacle = KillingObstacleComponent.create(
-      game: this,
-      position: Vector2(350, -145),
+    await addAll(ghosts);
+    for (var ghost in ghosts) {
+      ghost.moveAlongPoints();
+    }
+    await add(
+      WinObstacleComponent.create(
+        game: this,
+        position: Vector2(1500, bottomLine),
+      ),
     );
-    await add(killingObstacle);
-    killingObstacle.moveAlongPoints();
-    // await add(
-    //   YoungsterComponent(
-    //     game: this,
-    //     title: SpritesTitles.ghost,
-    //     position: Vector2(400, -100),
-    //     size: Vector2(100, 100),
-    //   ),
-    // );
-
-    // await add(
-    //   WinObstacleComponent.create(
-    //     game: this,
-    //     position: Vector2(500, -worldBottomY),
-    //   ),
-    // );
-    // await add(
-    //   CandyBagComponent.create(
-    //     game: this,
-    //     position: Vector2(500, -worldBottomY + 300),
-    //   ),
-    // );
-    // await add(
-    //   KillingObstacleComponent.create(
-    //     game: this,
-    //     position: Vector2(350, -145),
-    //   ),
-    // );
     await onAssetsLoad();
     await super.onLoad();
     gameCamera.initCameraPosition();
@@ -222,11 +213,8 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
-    final shouldDragStart = !com.containsPoint(info.eventPosition.game);
-    if (shouldDragStart) {
-      dragStart = info.eventPosition.game;
-      isDragging = true;
-    }
+    dragStart = info.eventPosition.game;
+    isDragging = true;
     super.onDragStart(pointerId, info);
   }
 
@@ -242,15 +230,16 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       lastDiff = details.eventPosition.game - dragStart!;
       const moveCoeff = .5;
       final camPos = camera.position;
-      final finalCamPos =
-          Vector2(camPos.x - lastDiff!.x, camPos.y - lastDiff!.y);
-      camera.snapTo(Vector2(
-        camPos.x - lastDiff!.x * moveCoeff,
-        camPos.y + lastDiff!.y * moveCoeff,
-      ));
+      camera.snapTo(
+        Vector2(
+          camPos.x - lastDiff!.x * moveCoeff,
+          camPos.y + lastDiff!.y * moveCoeff,
+        ),
+      );
       dragStart = dragStart! + lastDiff!;
-      if (camera.position.x > 1)
+      if (camera.position.x > 1) {
         parallaxCom.parallax!.baseVelocity.setFrom(-lastDiff! * 10);
+      }
     } else if (isDragging) {
       setZeroParallax();
       lastDiff = details.eventPosition.game - dragStart!;
@@ -263,10 +252,10 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   }
 
   @override
-  void onDragEnd(int pointerId, DragEndInfo event) {
+  void onDragEnd(int pointerId, DragEndInfo details) {
     setZeroParallax();
     isDragging = false;
     lastDiff = null;
-    super.onDragEnd(pointerId, event);
+    super.onDragEnd(pointerId, details);
   }
 }
