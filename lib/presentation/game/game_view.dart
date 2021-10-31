@@ -221,7 +221,11 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   @override
   void update(double dt) {
     super.update(dt);
-    if (camera.position.x < 1) setZeroParallax();
+    if (camera.position.x < 1 ||
+        camera.position.x + camera.viewport.effectiveSize.x >
+            worldBounds.right - 1) {
+      setZeroParallax();
+    }
   }
 
   @override
@@ -237,7 +241,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         ),
       );
       dragStart = dragStart! + lastDiff!;
-      if (camera.position.x > 1) {
+      if (camera.position.x > 1 &&
+          camera.position.x + camera.viewport.effectiveSize.x <
+              worldBounds.right - 1) {
         parallaxCom.parallax!.baseVelocity.setFrom(-lastDiff! * 10);
       }
     } else if (isDragging) {
