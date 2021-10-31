@@ -62,6 +62,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   late final spritesCache = SpritesCache(game: this);
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
   late YoungsterComponent com;
+  bool isDragging = false;
+  Vector2? dragStart;
+  Vector2? lastDiff;
   @override
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
@@ -147,20 +150,35 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
-    log(info.eventPosition.game.toString());
+    dragStart = info.eventPosition.game;
     super.onDragStart(pointerId, info);
   }
 
   @override
   void onDragUpdate(int pointerId, DragUpdateInfo event) {
-    camera.followVector2(
-        Vector2(event.eventPosition.game.x, -event.eventPosition.game.y));
-    log(event.eventPosition.game.toString());
+    if (isDragging && dragStart != null) {
+      lastDiff = event.eventPosition.game - dragStart!;
+      const moveCoeff = .5;
+      final camPos = camera.position;
+      final finalCamPos =
+          Vector2(camPos.x - lastDiff!.x, camPos.y - lastDiff!.y);
+      camera.snapTo(Vector2(
+        camPos.x - lastDiff!.x * moveCoeff,
+        camPos.y + lastDiff!.y * moveCoeff,
+      ));
+      dragStart = dragStart! + lastDiff!;
+      log('cam: ${camPos}');
+      log('final ${finalCamPos.toString()}');
+    }
+    isDragging = true;
+    lastDiff = event.eventPosition.game - dragStart!;
     super.onDragUpdate(pointerId, event);
   }
 
   @override
   void onDragEnd(int pointerId, DragEndInfo event) {
+    isDragging = false;
+    lastDiff = null;
     super.onDragEnd(pointerId, event);
   }
 
