@@ -195,7 +195,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
       return KillingObstacleComponent.animated(
         game: game,
         position: position,
-        size: Vector2(120, 170),
+        size: Vector2(170, 240),
         stepTime: 0.1,
         sprites: sprites,
         ghostData: data,
@@ -204,7 +204,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
     return KillingObstacleComponent(
       game: game,
       position: Vector2(position.x, game.bottomLine),
-      size: Vector2(120, 170),
+      size: Vector2(170, 240),
       sprite: await game.loadSprite('${data.name}.png'),
       ghostData: data,
     );
