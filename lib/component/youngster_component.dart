@@ -87,7 +87,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   bool dragging = false;
   Vector2? dragStart;
   Vector2? dragDiff;
-  bool get dragEnabled => game.player.id == id;
+  bool get dragEnabled => true; //game.player.id == id;
 
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {

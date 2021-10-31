@@ -71,13 +71,15 @@ class _HomeViewState extends State<HomeView> {
                                 Positioned.fill(
                                   child: Image.asset(
                                     'assets/images/button.png',
+                                    fit: BoxFit.fitHeight,
                                   ),
                                 ),
                                 Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.only(top: 170),
+                                    padding: const EdgeInsets.only(top: 140),
                                     child: Image.asset(
                                       'assets/images/play_button.png',
+                                      fit: BoxFit.fitHeight,
                                     ),
                                   ),
                                 ),
