@@ -2,6 +2,11 @@ part of components;
 
 typedef CandiesCountList = List<SpritesTitles>;
 
+enum YoungsterState {
+  idle,
+  action,
+}
+
 class CandyKeeper {
   CandyKeeper({
     required this.game,
@@ -48,11 +53,11 @@ class CandyKeeper {
   }
 }
 
-class YoungsterAnimationComponent extends SpriteAnimationComponent {
+class YoungsterAnimationComponent extends SpriteAnimationGroupComponent {
   YoungsterAnimationComponent(
-    SpriteAnimation animation,
+    Map<dynamic, SpriteAnimation> animation,
     Vector2 spriteSize,
-  ) : super(size: spriteSize, animation: animation, position: -spriteSize / 2);
+  ) : super(size: spriteSize, animations: animation, position: -spriteSize / 2);
 }
 
 class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
@@ -83,6 +88,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
       initialCandiesCount: initialCandiesCount,
     );
   }
+  late SpriteAnimationGroupComponent youngster;
   late final candyKeeper = CandyKeeper(position: initialPosition, game: game);
   final Vector2 initialPosition;
   final Vector2 size;
@@ -121,29 +127,43 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   bool onDragEnd(int pointerId, DragEndInfo event) {
     // body.applyForce(event.velocity * 100);
     // if ((dragDiff?.length ?? 0) > 20) {
-    if (dragEnabled) {
-      SpritesTitles? title;
-      bool addCandy = false;
-      if (candyKeeper.candies.isNotEmpty) {
-        title = candyKeeper.candies.last;
-        candyKeeper.removeCandy(title);
-        addCandy = true;
-      }
-      if (debugMode) addCandy = true;
-      if (addCandy) {
-        game.add(
-          FlyingCandyComponent.create(
-            game: game,
-            velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
-            position: body.position + Vector2(50, 10),
-            title: title,
-          ),
-        );
-        // }
-        log('velocity ${event.velocity} dragDiff $dragDiff ');
-      }
-      dragging = false;
+    youngster.current = YoungsterState.action;
+    int animCount = 0;
+    if (title == SpritesTitles.princess) {
+      animCount = 9;
+    } else if (title == SpritesTitles.youngGirl) {
+      animCount = 7;
+    } else if (title == SpritesTitles.youngBoy) {
+      animCount = 6;
     }
+    log(animCount.toString());
+    log(title.toString());
+    async.Timer(Duration(milliseconds: 100 * animCount), () {
+      youngster.current = YoungsterState.idle;
+      if (dragEnabled) {
+        SpritesTitles? title;
+        bool addCandy = false;
+        if (candyKeeper.candies.isNotEmpty) {
+          title = candyKeeper.candies.last;
+          candyKeeper.removeCandy(title);
+          addCandy = true;
+        }
+        if (debugMode) addCandy = true;
+        if (addCandy) {
+          game.add(
+            FlyingCandyComponent.create(
+              game: game,
+              velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
+              position: body.position + Vector2(50, 10),
+              title: title,
+            ),
+          );
+          // }
+          log('velocity ${event.velocity} dragDiff $dragDiff ');
+        }
+        dragging = false;
+      }
+    });
     return super.onDragEnd(pointerId, event);
   }
 
@@ -196,12 +216,30 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
       final spritePath = '${describeEnum(title).snakeCase}_idle/$i.png';
       sprites.add(await game.loadSprite(spritePath));
     }
-    await add(
-      YoungsterAnimationComponent(
-        SpriteAnimation.spriteList(sprites, stepTime: 0.1),
-        size,
-      ),
+    final spritesThrow = <Sprite>[];
+    int animCount = 0;
+    if (title == SpritesTitles.princess) {
+      animCount = 9;
+    } else if (title == SpritesTitles.youngGirl) {
+      animCount = 7;
+    } else if (title == SpritesTitles.youngBoy) {
+      animCount = 6;
+    }
+    for (int i = 1; i <= animCount; i++) {
+      final spritePath = '${describeEnum(title).snakeCase}_throw/$i.png';
+      spritesThrow.add(await game.loadSprite(spritePath));
+    }
+    final idle = SpriteAnimation.spriteList(sprites, stepTime: 0.1);
+    final action = SpriteAnimation.spriteList(spritesThrow, stepTime: 0.1);
+    youngster = YoungsterAnimationComponent(
+      <YoungsterState, SpriteAnimation>{
+        YoungsterState.idle: idle,
+        YoungsterState.action: action
+      },
+      size,
     );
+    youngster.current = YoungsterState.idle;
+    await add(youngster);
   }
 
   @override
