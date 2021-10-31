@@ -39,7 +39,9 @@ class WinContactCallback
     log(b.body.toString());
     b.candyKeeper.addCandy(a.title);
     game.remove(a);
-    onWin();
+    if (b.candyKeeper.candies.length == game.initalCandyCount) {
+      onWin();
+    }
   }
 
   @override
