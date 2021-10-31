@@ -87,7 +87,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
   bool dragging = false;
   Vector2? dragStart;
   Vector2? dragDiff;
-  bool get dragEnabled => game.player.id == id;
+  bool get dragEnabled => true; //game.player.id == id;
 
   @override
   bool onDragStart(int pointerId, DragStartInfo info) {
@@ -122,7 +122,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
         FlyingCandyComponent.create(
           game: game,
           velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
-          position: body.position + Vector2(0, 130),
+          position: body.position + Vector2(50, 10),
           title: title,
         ),
       );
@@ -191,7 +191,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
     super.update(dt);
     if (throwingTrajectory != null && dragging) {
       throwingTrajectory!.showDrag(
-        Vector2(body.position.x, 130 + body.position.y),
+        Vector2(50 + body.position.x, 10 + body.position.y),
         dragDiff! * 3,
       );
     } else {
@@ -304,6 +304,7 @@ class FlyingCandyComponent extends SpriteBodyComponent with HasPaint {
   void update(double dt) {
     super.update(dt);
     if (velocity.isZero()) return;
+    dt *= 2;
     velocity = velocity + game.world.gravity * dt * 3;
     body.setTransform(body.position + velocity * dt * 1.75, 0);
   }
@@ -325,12 +326,14 @@ class ThrowingTrajectoryComponent extends PositionComponent with HasPaint {
   void render(Canvas canvas) {
     super.render(canvas);
     if (!show) return;
-    for (int time = 0; time < 10; time++) {
-      double x =
-          -position.x - velocity.x * time - game.world.gravity.x * time * time;
+    for (int time = 0; time < 5; time++) {
+      double x = -position.x -
+          velocity.x * time -
+          game.world.gravity.x * time * time +
+          50;
       double y = -position.y +
           (velocity.y * time - game.world.gravity.y * time * time) -
-          130;
+          10;
       canvas.drawCircle(Offset(x, y), 5, paint);
     }
   }
