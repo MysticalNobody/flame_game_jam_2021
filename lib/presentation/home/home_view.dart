@@ -155,6 +155,66 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           );
+        } else if (model.page == Pages.finish) {
+          return Material(
+            color: Colors.black,
+            child: GestureDetector(
+              onTap: () {
+                model.changePage(Pages.menu);
+              },
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: .4,
+                    child: Image.asset(
+                      'assets/images/bg.png',
+                      fit: BoxFit.cover,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                  ),
+                  Center(
+                      child: Opacity(
+                    opacity: .8,
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      width: MediaQuery.of(context).size.width - 64,
+                      height: MediaQuery.of(context).size.height - 64,
+                      decoration: BoxDecoration(
+                          color: Color(0xffeb9062),
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Congratulations',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                Divider(),
+                                Text(
+                                  'Congratulations, you\'ve completed our super super cool game! We tried very hard to make you like it!\nAuthors:',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w300),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            'tap to go to menu',
+                            style: TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+                ],
+              ),
+            ),
+          );
         } else {
           return AppGameView(
             game: gameWidget,
