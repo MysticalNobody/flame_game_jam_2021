@@ -145,13 +145,15 @@ class FlyingCandyComponent extends BodyComponent with HasPaint {
     final bodyDef = BodyDef()
       ..position = position
       ..userData = this
-      ..linearVelocity = velocity
       ..type = BodyType.dynamic;
-    return world.createBody(bodyDef)
-      ..createFixture(fixtureDef)
-      ..setMassData(MassData()..mass = 10)
-      ..inertia = 100
-      ..applyForce(velocity);
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    velocity = velocity + game.world.gravity * dt * 5;
+    body.setTransform(body.position + velocity * dt * 5, 0);
   }
 }
 

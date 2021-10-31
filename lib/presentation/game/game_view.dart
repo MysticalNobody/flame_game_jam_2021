@@ -100,7 +100,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Rect get worldBounds => camera.worldBounds!;
   @override
   Future<void> onLoad() async {
-    debugMode = true;
+    // debugMode = true;
     await spritesCache.onLoad();
     // world.setGravity(Vector2(200, -10));
     await addAll(createBoundaries(this));
@@ -196,9 +196,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   }
 
   @override
-  void onDragUpdate(int pointerId, DragUpdateInfo event) {
+  void onDragUpdate(int pointerId, DragUpdateInfo details) {
     if (isDragging && dragStart != null) {
-      lastDiff = event.eventPosition.game - dragStart!;
+      lastDiff = details.eventPosition.game - dragStart!;
       const moveCoeff = .5;
       final camPos = camera.position;
       final finalCamPos =
@@ -214,9 +214,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       treesParallax.parallax!.baseVelocity.setFrom(-lastDiff! * 4);
     } else if (isDragging) {
       setZeroParallax();
-      lastDiff = event.eventPosition.game - dragStart!;
+      lastDiff = details.eventPosition.game - dragStart!;
     }
-    super.onDragUpdate(pointerId, event);
+    super.onDragUpdate(pointerId, details);
   }
 
   void setZeroParallax() {
