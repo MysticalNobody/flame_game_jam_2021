@@ -12,6 +12,30 @@ enum ObstacleType {
   lose,
 }
 
+class GhostData {
+  // ignore: avoid_positional_boolean_parameters
+  GhostData(this.name, [this.animated = false, this.count = 1]);
+  String name = 'ghost1';
+  int count = 1;
+  bool animated = false;
+  bool horMove = true;
+  bool verMove = true;
+}
+
+final ghosts = <GhostData>[
+  GhostData('ghost1'),
+  GhostData('ghost2')..verMove = false,
+  GhostData('ghost3')
+    ..verMove = false
+    ..horMove = false,
+  GhostData('ghost4')..verMove = false,
+  GhostData('ghost5')..verMove = false,
+  GhostData('temp1', true, 12)..horMove = false,
+  GhostData('temp2', true, 16),
+  GhostData('temp3', true, 16),
+  GhostData('temp4', true, 16),
+];
+
 class PlayerContactCallback
     extends ContactCallback<FlyingCandyComponent, YoungsterComponent> {
   PlayerContactCallback({required this.game, required this.onContact});
@@ -96,24 +120,24 @@ class BounceContactCallback
 class WinObstacleComponent extends BaseObstacleComponent {
   WinObstacleComponent({
     required AppGame game,
-    required SpritesTitles title,
     required Vector2 position,
     required Vector2 size,
+    required Sprite sprite,
     BodyType type = BodyType.dynamic,
   }) : super(
           game: game,
           position: position,
           size: size,
-          title: title,
           type: type,
+          sprite: sprite,
         );
-  factory WinObstacleComponent.create({
+  static Future<WinObstacleComponent> create({
     required AppGame game,
     required Vector2 position,
-  }) =>
+  }) async =>
       WinObstacleComponent(
         game: game,
-        title: SpritesTitles.candyBag,
+        sprite: await game.loadSprite('candy_bag.png'),
         position: position,
         type: BodyType.static,
         size: Vector2(100, 100),
@@ -122,85 +146,65 @@ class WinObstacleComponent extends BaseObstacleComponent {
   late final candyKeeper = CandyKeeper(position: position, game: game);
 }
 
-/// Like a wall
-class BounceObstacleComponent extends BaseObstacleComponent {
-  BounceObstacleComponent({
-    required AppGame game,
-    required SpritesTitles title,
-    required Vector2 position,
-    required Vector2 size,
-    BodyType type = BodyType.dynamic,
-  }) : super(
-          game: game,
-          position: position,
-          size: size,
-          title: title,
-          type: type,
-        );
-  factory BounceObstacleComponent.create({
-    required AppGame game,
-    required Vector2 position,
-  }) =>
-      BounceObstacleComponent(
-        game: game,
-        title: SpritesTitles.candyBag,
-        position: position,
-        type: BodyType.static,
-        size: Vector2(100, 100),
-      );
-}
-
 /// Like a ghost
 class KillingObstacleComponent extends BaseObstacleComponent {
   KillingObstacleComponent({
     required AppGame game,
-    required SpritesTitles title,
     required Vector2 position,
     required Vector2 size,
-    BodyType type = BodyType.dynamic,
+    required Sprite sprite,
+    GhostData? ghostData,
   }) : super(
           game: game,
           position: position,
           size: size,
-          title: title,
-          type: type,
+          sprite: sprite,
+          ghostData: ghostData,
         );
   KillingObstacleComponent.animated({
     required AppGame game,
-    required SpritesTitles title,
     required List<Sprite> sprites,
     required double stepTime,
     required Vector2 position,
     required Vector2 size,
     BodyType type = BodyType.dynamic,
+    GhostData? ghostData,
   }) : super.animated(
           game: game,
           position: position,
           size: size,
-          title: title,
           type: type,
           sprites: sprites,
           stepTime: stepTime,
+          ghostData: ghostData,
         );
-  factory KillingObstacleComponent.create({
+
+  static Future<KillingObstacleComponent> create({
     required AppGame game,
     required Vector2 position,
-  }) {
-    final titles = [
-      SpritesTitles.ghost1,
-      SpritesTitles.ghost2,
-      SpritesTitles.ghost3,
-      SpritesTitles.ghost4,
-      SpritesTitles.ghost5,
-    ];
-    final title = titles[math.Random().nextInt(5)];
-    return KillingObstacleComponent.animated(
+  }) async {
+    final r = math.Random();
+    final data = ghosts[r.nextInt(ghosts.length)];
+    if (data.animated) {
+      final sprites = <Sprite>[];
+      for (final index in List.generate(data.count, (index) => index + 1)) {
+        sprites.add(await game.loadSprite('ghosts/${data.name}-$index.png'));
+      }
+      return KillingObstacleComponent.animated(
+        game: game,
+        position: position,
+        size: Vector2(100, 120),
+        stepTime: 0.1,
+        sprites: sprites,
+        ghostData: data,
+      );
+    }
+    return KillingObstacleComponent(
       game: game,
-      title: title,
-      position: position,
+      position: Vector2(position.x, game.bottomLine),
       size: Vector2(100, 120),
-      stepTime: 1,
-      sprites: titles.map((_) => game.getSprite(_)).toList(),
+      sprite: await game.loadSprite('${data.name}.png'),
+      ghostData: data,
     );
   }
 }
@@ -208,34 +212,28 @@ class KillingObstacleComponent extends BaseObstacleComponent {
 /// Like a ghost
 class BaseObstacleComponent extends AnimatedSpriteBodyComponent {
   BaseObstacleComponent({
-    required this.title,
     required this.game,
     required this.position,
     required Vector2 size,
+    required Sprite sprite,
+    this.ghostData,
     this.type = BodyType.dynamic,
-  })  : sprite = game.getSprite(title),
-        super(
-          SpriteAnimation.spriteList([game.getSprite(title)], stepTime: 1),
+  }) : super(
+          SpriteAnimation.spriteList([sprite], stepTime: 1),
           size,
         );
   BaseObstacleComponent.animated({
-    required this.title,
     required List<Sprite> sprites,
     required double stepTime,
     required this.game,
     required this.position,
     required Vector2 size,
+    this.ghostData,
     this.type = BodyType.dynamic,
-  })  : sprite = game.getSprite(title),
-        super(
-          SpriteAnimation.spriteList(sprites, stepTime: stepTime),
-          size,
-        );
-
+  }) : super(SpriteAnimation.spriteList(sprites, stepTime: stepTime), size);
+  GhostData? ghostData;
   final Vector2 position;
-  final SpritesTitles title;
   final AppGame game;
-  final Sprite sprite;
   final BodyType type;
 
   async.Timer? timer;
@@ -247,11 +245,15 @@ class BaseObstacleComponent extends AnimatedSpriteBodyComponent {
   }
 
   void moveAlongPoints() {
+    final rand = math.Random();
+    final horMove = ghostData?.horMove ?? false;
+    final verMove = ghostData?.verMove ?? false;
+    final sign = <double>[-1, -1, 0, 1, 1];
     timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
-      final rand = math.Random();
-      final sign = [-1, -1, 0, 1, 1][rand.nextInt(5)];
-      final dir = [-1, 0, 0, 0, 1][rand.nextInt(5)];
-      body.applyLinearImpulse(Vector2(dir * sign * 2000, dir * sign * 2000));
+      Vector2 res = Vector2(0, 0);
+      if (horMove) res.x = sign[rand.nextInt(5)];
+      if (verMove) res.y = sign[rand.nextInt(5)];
+      body.applyLinearImpulse(res * 2000);
     });
   }
 

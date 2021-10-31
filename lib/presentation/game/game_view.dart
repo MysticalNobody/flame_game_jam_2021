@@ -139,6 +139,8 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       getSprite(SpritesTitles.bgHome2),
     ];
     final r = math.Random();
+    final normalRoad = getSprite(SpritesTitles.bgRoadMiddle);
+    final reversedRoad = await loadSprite('bg_road_middle_reversed.png');
     for (int i = 0; i < backsCount; i++) {
       final backLeftTop = Vector2(
         worldBounds.left + i * backSize.x,
@@ -152,7 +154,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       final road = BackgroundComponent(
         sprite: i == 0
             ? getSprite(SpritesTitles.bgRoadStart)
-            : getSprite(SpritesTitles.bgRoadMiddle),
+            : i.isOdd
+                ? reversedRoad
+                : normalRoad,
         size: backSize,
         position: backLeftTop,
       );
@@ -191,9 +195,9 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     addContactCallback(GroundContactCallback(game: this));
 
     final ghosts = <KillingObstacleComponent>[];
-    for (int i = 700; i < levelLength - 700; i += 300 + r.nextInt(200)) {
+    for (int i = 700; i < levelLength - 700; i += 200 + r.nextInt(100)) {
       ghosts.add(
-        KillingObstacleComponent.create(
+        await KillingObstacleComponent.create(
           game: this,
           position: Vector2(
             i.toDouble(),
@@ -204,7 +208,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     }
     await addAll(ghosts);
     await add(
-      WinObstacleComponent.create(
+      await WinObstacleComponent.create(
         game: this,
         position: Vector2(levelLength - 300, bottomLine),
       ),

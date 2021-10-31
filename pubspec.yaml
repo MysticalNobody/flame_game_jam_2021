@@ -79,6 +79,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/ghosts/
     - assets/images/princess_idle/
     - assets/images/princess_throw/
     - assets/images/young_boy_idle/
