@@ -237,17 +237,12 @@ class BaseObstacleComponent extends SpriteBodyComponent {
   final BodyType type;
 
   async.Timer? timer;
-  widgets.AxisDirection impulseDirection = widgets.AxisDirection.up;
   void moveAlongPoints() {
     timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
-      final dir = [-1, -1, 0, 1, 1][math.Random().nextInt(5)];
-
-      body.applyLinearImpulse(Vector2(0, dir * 2000));
-      if (impulseDirection == widgets.AxisDirection.up) {
-        impulseDirection = widgets.AxisDirection.down;
-      } else {
-        impulseDirection = widgets.AxisDirection.up;
-      }
+      final rand = math.Random();
+      final sign = [-1, -1, 0, 1, 1][rand.nextInt(5)];
+      final dir = [1, 0, 0, 0, 1][rand.nextInt(5)];
+      body.applyLinearImpulse(Vector2(dir * sign * 2000, dir * sign * 2000));
     });
   }
 

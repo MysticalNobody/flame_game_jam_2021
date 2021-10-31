@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:example/component/components.dart';
@@ -137,13 +138,25 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       position: Vector2(300, -700),
     );
     await add(com);
+    final ghostsPositions = List.generate(50, (index) => 100 + 30 * index);
+    final rand = math.Random();
+
+    final ghosts = List.generate(10, (i) => i)
+        .map(
+          (_) => KillingObstacleComponent.create(
+            game: this,
+            position: Vector2(
+              ghostsPositions[rand.nextInt(ghostsPositions.length)].toDouble(),
+              -145,
+            ),
+          ),
+        )
+        .toList();
     // gameCamera.followComponent(com.positionComponent);
-    final killingObstacle = KillingObstacleComponent.create(
-      game: this,
-      position: Vector2(350, -145),
-    );
-    await add(killingObstacle);
-    killingObstacle.moveAlongPoints();
+    await addAll(ghosts);
+    for (var ghost in ghosts) {
+      ghost.moveAlongPoints();
+    }
     // await add(
     //   YoungsterComponent(
     //     game: this,
