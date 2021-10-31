@@ -1,4 +1,4 @@
-# game for Flame Game Jam 1
+# Game for Flame Game Jam 1
 
 Written on Flame.
 
