@@ -235,11 +235,18 @@ class BaseObstacleComponent extends AnimatedSpriteBodyComponent {
   final BodyType type;
 
   async.Timer? timer;
+
+  @override
+  Future<void> onLoad() {
+    moveAlongPoints();
+    return super.onLoad();
+  }
+
   void moveAlongPoints() {
     timer = async.Timer.periodic(const Duration(seconds: 2), (timer) {
       final rand = math.Random();
       final sign = [-1, -1, 0, 1, 1][rand.nextInt(5)];
-      final dir = [1, 0, 0, 0, 1][rand.nextInt(5)];
+      final dir = [-1, 0, 0, 0, 1][rand.nextInt(5)];
       body.applyLinearImpulse(Vector2(dir * sign * 2000, dir * sign * 2000));
     });
   }

@@ -72,7 +72,6 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   Sprite getSprite(SpritesTitles title) => spritesCache.sprites[title]!;
 
   late YoungsterComponent player;
-  late YoungsterComponent firstPlayer;
 
   bool isDragging = false;
   Vector2? dragStart;
@@ -108,8 +107,10 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           ..prepare(this))
         .parallax!
         .size;
+    const backsCount = 4;
+    final levelLength = backSize.x * backsCount;
 
-    camera.worldBounds = Rect.fromLTRB(0, 0, backSize.x * 4, backSize.y * 1.2);
+    camera.worldBounds = Rect.fromLTRB(0, 0, levelLength, backSize.y * 1.2);
     await addAll(createBoundaries(this));
     await add(
       parallaxCom = await loadParallaxComponent(
@@ -127,7 +128,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       getSprite(SpritesTitles.bgHome2),
     ];
     final r = math.Random();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < backsCount; i++) {
       final backLeftTop = Vector2(
         worldBounds.left + i * backSize.x,
         worldBounds.bottom - backSize.y,
@@ -146,22 +147,24 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
       );
       await addAll([home, road]);
     }
-
-    firstPlayer = YoungsterComponent.create(
-      game: this,
-      initialCandiesCount: initalCandyCount,
-      position: Vector2(300, bottomLine),
-    );
-
-    final players = [800, 1400, 2000].map(
-      (e) => YoungsterComponent.create(
+    final players = [
+      YoungsterComponent.create(
         game: this,
-        position: Vector2(e.toDouble(), bottomLine),
+        initialCandiesCount: initalCandyCount,
+        position: Vector2(300, bottomLine),
       ),
-    );
+    ];
+    for (int i = 900; i < levelLength - 800; i += 600 + r.nextInt(500)) {
+      players.add(
+        YoungsterComponent.create(
+          game: this,
+          position: Vector2(i.toDouble(), bottomLine),
+        ),
+      );
+    }
 
-    await addAll([firstPlayer, ...players]);
-    player = firstPlayer;
+    await addAll(players);
+    player = players.first;
 
     addContactCallback(
       PlayerContactCallback(
@@ -177,29 +180,23 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
     addContactCallback(BounceContactCallback(game: this, onBounce: () {}));
     addContactCallback(GroundContactCallback(game: this));
 
-    final ghostsPositions = List.generate(50, (index) => 400 + 60 * index);
-    final rand = math.Random();
-
-    final ghosts = List.generate(10, (i) => i)
-        .map(
-          (_) => KillingObstacleComponent.create(
-            game: this,
-            position: Vector2(
-              ghostsPositions[rand.nextInt(ghostsPositions.length)].toDouble(),
-              -145,
-            ),
+    final ghosts = <KillingObstacleComponent>[];
+    for (int i = 700; i < levelLength - 700; i += 300 + r.nextInt(200)) {
+      ghosts.add(
+        KillingObstacleComponent.create(
+          game: this,
+          position: Vector2(
+            i.toDouble(),
+            -145,
           ),
-        )
-        .toList();
-    // gameCamera.followComponent(com.positionComponent);
-    await addAll(ghosts);
-    for (var ghost in ghosts) {
-      ghost.moveAlongPoints();
+        ),
+      );
     }
+    await addAll(ghosts);
     await add(
       WinObstacleComponent.create(
         game: this,
-        position: Vector2(1500, bottomLine),
+        position: Vector2(levelLength - 300, bottomLine),
       ),
     );
     await onAssetsLoad();
