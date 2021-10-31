@@ -97,8 +97,10 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
     debugMode = false;
-    camera.zoom =
-        window.physicalSize.height / window.devicePixelRatio / canvasSize.y;
+    camera.zoom = window.physicalSize.height /
+        window.devicePixelRatio /
+        canvasSize.y *
+        .85;
   }
 
   double get bottomLine => -worldBounds.bottom + 140;
@@ -122,7 +124,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           ..prepare(this))
         .parallax!
         .size;
-    const backsCount = 16;
+    const backsCount = 5;
     final levelLength = backSize.x * backsCount;
 
     camera.worldBounds = Rect.fromLTRB(0, 0, levelLength, backSize.y * 1.2);
@@ -258,7 +260,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
   void onDragUpdate(int pointerId, DragUpdateInfo details) {
     if (isDragging && dragStart != null) {
       lastDiff = details.eventPosition.game - dragStart!;
-      const moveCoeff = .5;
+      const moveCoeff = .7;
       final camPos = camera.position;
       camera.snapTo(
         Vector2(
