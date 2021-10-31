@@ -118,7 +118,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
           ..prepare(this))
         .parallax!
         .size;
-    const backsCount = 4;
+    const backsCount = 16;
     final levelLength = backSize.x * backsCount;
 
     camera.worldBounds = Rect.fromLTRB(0, 0, levelLength, backSize.y * 1.2);

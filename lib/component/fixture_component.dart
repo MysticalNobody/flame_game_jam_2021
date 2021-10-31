@@ -193,7 +193,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
       return KillingObstacleComponent.animated(
         game: game,
         position: position,
-        size: Vector2(100, 120),
+        size: Vector2(140, 200),
         stepTime: 0.1,
         sprites: sprites,
         ghostData: data,
