@@ -82,7 +82,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
 
     return YoungsterComponent(
       game: game,
-      size: Vector2(130, 220),
+      size: Vector2(180, 300),
       initialPosition: position,
       title: title,
       initialCandiesCount: initialCandiesCount,
@@ -154,7 +154,7 @@ class YoungsterComponent extends BodyComponent with Draggable, EquatableMixin {
             FlyingCandyComponent.create(
               game: game,
               velocity: -dragDiff! * 3, //Vector2(dragDiff!.x, -dragDiff!.y),
-              position: body.position + Vector2(50, 10),
+              position: body.position + Vector2(80, 10),
               title: title,
             ),
           );

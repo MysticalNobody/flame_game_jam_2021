@@ -23,13 +23,13 @@ class GhostData {
 }
 
 final ghosts = <GhostData>[
-  GhostData('ghost1')..verMove = false,
-  GhostData('ghost2'),
-  GhostData('ghost3')
-    ..horMove = false
-    ..verMove = false,
-  GhostData('ghost4')..verMove = false,
-  GhostData('ghost5')..verMove = false,
+  // GhostData('ghost1')..verMove = false,
+  // GhostData('ghost2'),
+  // GhostData('ghost3')
+  //   ..horMove = false
+  //   ..verMove = false,
+  // GhostData('ghost4')..verMove = false,
+  // GhostData('ghost5')..verMove = false,
   GhostData('temp1', true, 12)
     ..horMove = false
     ..verMove = false,
@@ -195,7 +195,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
       return KillingObstacleComponent.animated(
         game: game,
         position: position,
-        size: Vector2(140, 200),
+        size: Vector2(170, 240),
         stepTime: 0.1,
         sprites: sprites,
         ghostData: data,
@@ -204,7 +204,7 @@ class KillingObstacleComponent extends BaseObstacleComponent {
     return KillingObstacleComponent(
       game: game,
       position: Vector2(position.x, game.bottomLine),
-      size: Vector2(100, 120),
+      size: Vector2(170, 240),
       sprite: await game.loadSprite('${data.name}.png'),
       ghostData: data,
     );

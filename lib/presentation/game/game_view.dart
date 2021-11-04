@@ -103,7 +103,7 @@ class AppGame extends Forge2DGame with FPSCounter, HasDraggableComponents {
         .85;
   }
 
-  double get bottomLine => -worldBounds.bottom + 140;
+  double get bottomLine => -worldBounds.bottom + 200;
   Rect get worldBounds => camera.worldBounds!;
   final initalCandyCount = 15;
 
